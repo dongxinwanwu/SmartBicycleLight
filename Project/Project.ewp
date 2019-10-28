@@ -2224,7 +2224,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$TOOLKIT_DIR$\config\lnkstm8s105k4.icf</state>
+                    <state>$TOOLKIT_DIR$\config\lnkstm8s105k6.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
@@ -10477,6 +10477,9 @@
                 <name>$PROJ_DIR$\..\Hal\inc\led.h</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Hal\inc\pwm.h</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Hal\inc\timer.h</name>
             </file>
         </group>
@@ -10493,6 +10496,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Hal\src\led.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Hal\src\pwm.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Hal\src\timer.c</name>

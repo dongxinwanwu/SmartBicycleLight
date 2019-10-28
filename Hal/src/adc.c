@@ -155,7 +155,7 @@ uint16_t GetADCVol(void)
 enPhotoState GetPhotoState(void)
 {
   uint16_t voltage = 0;
-  enPhotoState state = 0;
+  enPhotoState state = DAY;
 
   voltage = GetADCVol();
 

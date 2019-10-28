@@ -9,7 +9,7 @@
 ******************************************************************************
 */
 #include "debug.h"
-#include "timer.h"
+
 /* Private typedef -----------------------------------------------------------*/
 
 /* Private define ------------------------------------------------------------*/
@@ -18,10 +18,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
-void Uart2_Config(uint32_t baudrate);
-void UartSendCommand(uint8_t funcode,uint8_t *data,uint8_t len);
-/*******************************************************************************/
-
+#if (defined DEBUG) && (DEBUG == TRUE)
 /*******************************************************************************
 * @fn
 *
@@ -31,28 +28,25 @@ void UartSendCommand(uint8_t funcode,uint8_t *data,uint8_t len);
 *
 * @return
 */
-void Uart2_Config(uint32_t baudrate)
+void DebugUart_Config(enBaudRate baudrate)
 {
-  /* Deinitializes the UART2 peripheral */
+  /*Enable Clock*/
+  CLK_PeripheralClockConfig(CLK_PERIPHERAL_UART2,ENABLE);
+
   UART2_DeInit();
 
-  /* UART2 configuration */
-  /* UART2 configured as follow:
-  - BaudRate = 9600 baud
-  - Word Length = 8 Bits
-  - One Stop Bit
-  - No parity
-  - Receive and transmit enabled
-  - UART2 Clock disabled
+  /* UART1 configuration ------------------------------------------------------*/
+  /* UART1 configured as follow:
+        - BaudRate = 115200 baud
+        - Word Length = 8 Bits
+        - One Stop Bit
+        - No parity
+        - Receive and transmit enabled
+        - UART1 Clock disabled
   */
-
   UART2_Init((uint32_t)baudrate, UART2_WORDLENGTH_8D, UART2_STOPBITS_1, UART2_PARITY_NO,
-             UART2_SYNCMODE_CLOCK_DISABLE, UART2_MODE_TXRX_ENABLE);
+              UART2_SYNCMODE_CLOCK_DISABLE, UART2_MODE_TXRX_ENABLE);
 
-  /* Enable UART2 Transmit interrupt*/
-  UART2_ITConfig(UART2_IT_RXNE_OR, ENABLE);
-
-  /*Enable*/
   UART2_Cmd(ENABLE);
 }
 
@@ -65,7 +59,7 @@ void Uart2_Config(uint32_t baudrate)
 *
 * @return
 */
-void UartSendData(uint8_t *buff,uint8_t len)
+void DebugPrintf(uint8_t *buff,uint8_t len)
 {
 	for(uint8_t i = 0; i < len; i++)
 	{
@@ -76,3 +70,8 @@ void UartSendData(uint8_t *buff,uint8_t len)
     while (UART2_GetFlagStatus(UART2_FLAG_TC) == RESET);
 	}
 }
+#else
+void DebugUart_Config(uint32_t baudrate){}
+void DebugPrintf(uint8_t *buff,uint8_t len){}
+
+#endif
