@@ -35,7 +35,24 @@ uint16_t SysEvent = 0;
 */
 void SystemTimer_Config(void)
 {
+  uint16_t timer_period = 0;
+  /* Enable TIM4 CLK */
+  CLK_PeripheralClockConfig(CLK_PERIPHERAL_TIMER2, ENABLE);
 
+  /**/
+  timer_period = TIME_HARD_TICK * 125 - 1;
+
+  /* Time base configuration */
+  TIM2_TimeBaseInit(TIM2_PRESCALER_128,timer_period);
+
+  /* Clear TIM2 update flag */
+  TIM2_ClearFlag(TIM2_FLAG_UPDATE);
+
+  /* Enable update interrupt */
+  TIM2_ITConfig(TIM2_IT_UPDATE, ENABLE);
+
+  /* Enable TIM2 */
+  TIM2_Cmd(ENABLE);
 }
 
 /*******************************************************************************

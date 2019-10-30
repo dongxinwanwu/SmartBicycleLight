@@ -13,10 +13,6 @@
 
 #include "define.h"
 /******************************************************************************/
-typedef void (*Photo_Init)(HardLink_t *hardlink);
-typedef void (*Photo_Open)(void);
-typedef void (*Photo_Close)(void);
-/*****************************************************************************/
 /*! \brief Photo State
  *
  */
@@ -26,15 +22,23 @@ typedef enum
 	NIGHT  = (uint8_t)0x01
 }enPhotoState;
 
+typedef void (*Photo_Init)(HardLink_t *hardlink);
+typedef void (*Photo_Open)(void);
+typedef void (*Photo_Close)(void);
+typedef enPhotoState (*Photo_GetState)(void);
+/*****************************************************************************/
 typedef struct
 {
   HardLink_t hardLink;  /*硬件连接*/
   Photo_Open open;      /*开*/
   Photo_Close close;    /*关*/
+  Photo_GetState GetState;
   enPhotoState state;
 }PhotoControl_t;
 /*****************************************************************************/
-void PhotoADC_Init(HardLink_t *hardlink);
+extern PhotoControl_t PhotoDev;
+/*****************************************************************************/
+void ADC_Init(PhotoControl_t *dev);
 
 /*! \brief Photo ADC Open
  *

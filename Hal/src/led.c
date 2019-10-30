@@ -17,6 +17,14 @@
 /* Private macro -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
+LedDeviceControl_t PhotoLed =
+{
+  .hardLink.port  = GPIOB,
+  .hardLink.pin   = GPIO_PIN_3,
+  .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+  .Ctrl           = LedControl,
+  .state          = OFF
+};
 /* Private function prototypes -----------------------------------------------*/
 
 /*******************************************************************************

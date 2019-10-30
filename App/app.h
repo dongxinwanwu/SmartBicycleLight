@@ -21,6 +21,8 @@
 #include "adc.h"
 #include "pwm.h"
 #include "debug.h"
+#include "lis3dh_driver.h"
+
 /*****************************************************************************/
 /*****************************************************************************/
 extern void System_eventloop_hook(void);

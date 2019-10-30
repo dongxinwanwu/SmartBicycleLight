@@ -53,8 +53,15 @@ void main(void)
   /* enable interrupts */
   enableInterrupts();
 
+  /*init mems*/
+  system_start_timer(USERAPP_LIS3DH_INIT_EVT,TIMER_ONCE_MODE,LIS3DH_DELAY_INIT_TIME);
+
   /*reload wdt*/
   system_start_timer(USERAPP_RELOAD_WDT_EVT,TIMER_AUTO_MODE,RELOAD_WDT_TIME);
+
+  /*start check photo*/
+  system_start_timer(USERAPP_PHOTO_COLLECT_EVT,TIMER_ONCE_MODE,PHOTO_CHECK_LOOP_TIME);
+
   /*Infinite loop */
   while (1)
   {
@@ -80,6 +87,8 @@ void SysBspInit(void)
   SysClock_Config();
   SysPeriphDeInit();
 
+  Led_Init(&PhotoLed);
+  ADC_Init(&PhotoDev);
   /*user timer*/
   SystemTimer_Config();
   system_timer_init(ProcessSystemTimeEvent);
@@ -123,6 +132,8 @@ void SysPeriphDeInit(void)
 	GPIO_DeInit(GPIOE);
 	GPIO_DeInit(GPIOF);
   ADC1_DeInit();
+  SPI_DeInit();
+  EXTI_DeInit();
 }
 /*******************************************************************************
 * @fn     IWDG_Config

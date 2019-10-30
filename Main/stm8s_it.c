@@ -154,6 +154,15 @@ INTERRUPT_HANDLER(EXTI_PORTD_IRQHandler, 6)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+
+  /*ÑÓÊ±Ïû³ý¶¶¶¯*/
+  UserTimingDelay(1600);
+
+  /* key interrupt*/
+  if(GPIO_ReadInputPin(OnOffKey.hardLink.port, OnOffKey.hardLink.pin) == RESET)
+  {
+    HAL_KEY_Callback(&OnOffKey);
+  }
 }
 
 /**

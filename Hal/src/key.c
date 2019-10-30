@@ -17,7 +17,7 @@ void HalKeyPoll (void);
 KeyDeviceControl_t  OnOffKey =
 {
   .hardLink.port                = GPIOD,
-  .hardLink.pin                 = GPIO_PIN_2,
+  .hardLink.pin                 = GPIO_PIN_7,
   .hardLink.mode                = GPIO_MODE_IN_PU_IT,
   .exitLink.exit_port           = EXTI_PORT_GPIOD,
   .exitLink.exit_Trigger        = EXTI_SENSITIVITY_RISE_FALL,
@@ -30,12 +30,6 @@ uint8_t HalKeyCurrentKeys = HAL_KEY_SW_N;
 
 UserKeyDetect_t UserAppKey[HAL_APP_KEY_NUM] =
 {
-  {
-    .ClickActive = RESET,
-    .timestamp   = 0,
-    .ClickValue  = HAL_KEY_CLICKED_VALUE,
-    .HoldValue   = HAL_KEY_HOLD_VALUE
-  },
   {
     .ClickActive = RESET,
     .timestamp   = 0,

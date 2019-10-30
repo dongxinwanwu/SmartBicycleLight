@@ -13,7 +13,7 @@
 
 #include "define.h"
 /*****************************************************************************/
-#define HAL_APP_KEY_NUM                       2
+#define HAL_APP_KEY_NUM                       1
 #define HAL_KEY_DEBOUNCE_VALUE                30u     //30ms
 #define HAL_KEY_CLICKED_VALUE                 1500u   //1000ms
 #define HAL_KEY_HOLD_VALUE                    6000u   //6.0s
@@ -58,7 +58,7 @@ typedef struct
 
 /******************************************************************************/
 extern UserKeyDetect_t UserAppKey[HAL_APP_KEY_NUM] ;
-
+extern KeyDeviceControl_t  OnOffKey;
 /******************************************************************************/
 typedef void (*halKeyCBack_t) (uint8_t keys,UserKeyState_t state);
 

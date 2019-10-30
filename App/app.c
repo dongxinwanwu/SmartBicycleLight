@@ -33,6 +33,7 @@ void UserAppHandleKeys(uint8_t keys,UserKeyState_t state);
 void System_eventloop_hook(void)
 {
 
+
 }
 
 /*******************************************************************************
@@ -86,6 +87,50 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
     return events ^ USERAPP_KEY_HOLD_EVENT;
   }
 
+  if(events & USERAPP_LIS3DH_INIT_EVT)
+  {
+    LIS3DH_Init();
+    return events ^ USERAPP_LIS3DH_INIT_EVT;
+  }
+
+  if(events & USERAPP_LIS3DH_COLLECT_EVT)
+  {
+
+    return events ^ USERAPP_LIS3DH_COLLECT_EVT;
+  }
+
+  if(events & USERAPP_WIRELESS_COMM_EVT)
+  {
+
+    return events ^ USERAPP_WIRELESS_COMM_EVT;
+  }
+
+  if(events & USERAPP_PHOTO_COLLECT_EVT)
+  {
+    /*光照信息采集*/
+    PhotoDev.open();
+    PhotoDev.state = PhotoDev.GetState();
+
+    if(PhotoDev.state == DAY)
+    {
+      /*白天*/
+      LedControl(&PhotoLed.hardLink,SET);
+    }
+    else if(PhotoDev.state == NIGHT)
+    {
+      /*晚上*/
+      LedControl(&PhotoLed.hardLink,RESET);
+    }
+    else
+    {
+
+    }
+    PhotoDev.close();
+
+    system_start_timer(USERAPP_PHOTO_COLLECT_EVT,TIMER_ONCE_MODE,PHOTO_CHECK_LOOP_TIME);
+    return events ^ USERAPP_PHOTO_COLLECT_EVT;
+  }
+
   return 0;
 }
 
@@ -100,29 +145,9 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
 */
 void UserAppHandleKeys(uint8_t keys,UserKeyState_t state)
 {
-  /**/
-  if(keys & UserAppKey[0].keyLink.keyValue)
+  if(keys & OnOffKey.keyValue)
   {
     /*开关机按键*/
-    if(state == LONG_HOLD)
-    {
-
-    }
-    else
-    {
-
-    }
-  }
-  else if(keys & UserAppKey[1].keyLink.keyValue)
-  {
-    if(state == CLICK)
-    {
-
-    }
-    else
-    {
-
-    }
 
   }
   else

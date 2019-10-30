@@ -30,14 +30,10 @@ typedef struct
 }LedDeviceControl_t;
 
 /* Private define ------------------------------------------------------------*/
-extern LedDeviceControl_t LedSensor;
-extern LedDeviceControl_t LedRGB;
-extern LedDeviceControl_t LedWhite;
-extern LedDeviceControl_t LedNFC;
 /* Evalboard I/Os configuration */
 
 /*led*/
-
+extern LedDeviceControl_t PhotoLed;
 /* Private function prototypes -----------------------------------------------*/
 
 /* Private functions ---------------------------------------------------------*/

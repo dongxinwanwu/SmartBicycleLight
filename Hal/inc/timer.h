@@ -21,30 +21,19 @@
 #define TIME_HARD_TICK                        10u
 #define TIME_SOFT_TICK                        10u
 #define RELOAD_WDT_TIME                       200u
-#define START_LOOP_CHECK_TIME                 50u
-#define LOOP_RBG_PERIOD_TIME                  300u
-#define HAL_NFC_COMM_TIME                     1500u
-#define HAL_BAT_CHECK_TIME                    600000u
-#define HAL_ENCODER_DEBOUNCE_TIME             50u
-#define NFC_DIMMER_BLINK_TIME                 600u
-#define NFC_COMM_FORBID_TIME                  1000u
-#define NFC_ENCODE_FORBID_TIME                3000u
-#define NFC_PCD_MODE_TIMEOUT                  120000u
-#define HAL_LED_BLINK_TIME                    150u
+#define LIS3DH_DELAY_INIT_TIME                20u
+#define PHOTO_CHECK_LOOP_TIME                 500u
 
-#define MAX_TIME_NUM                          12u
+#define MAX_TIME_NUM                          8u
 #define USERAPP_RELOAD_WDT_EVT                0X0001
 #define USERAPP_KEY_POLL_EVT                  0x0002
 #define USERAPP_KEY_CLICK_EVENT               0x0004
 #define USERAPP_KEY_HOLD_EVENT                0x0008
-#define USERAPP_COLLECT_COLOR_EVT             0X0010
-#define USERAPP_HAL_ENCODE_EVT                0X0020
-#define USERAPP_HAL_ENCODE_DEBOUNCE_EVT       0X0040
-#define USERAPP_BAT_CHECK_EVT                 0X0080
-#define USERAPP_MIMMER_FLASH_EVT              0X0100
-#define USERAPP_NFC_FORBID_EVT                0X0200
-#define USERAPP_NFC_PCD_TIMEOUT_EVT           0X0400
-#define USERAPP_LED_BLINK_EVT                 0X0800
+#define USERAPP_LIS3DH_INIT_EVT               0X0010
+#define USERAPP_LIS3DH_COLLECT_EVT            0X0020
+#define USERAPP_WIRELESS_COMM_EVT             0X0040
+#define USERAPP_PHOTO_COLLECT_EVT             0X0080
+
 /******************************************************************************/
 typedef enum
 {

@@ -15,11 +15,14 @@
 /* Private typedef -----------------------------------------------------------*/
 
 /* Private define ------------------------------------------------------------*/
-#define PHOTO_ADC_CHANNEL  ADC1_CHANNEL_3
-#define ADC_SHIFT_NUM      4
-#define ADC_SAMPLE_COUNT   ((1 << ADC_SHIFT_NUM) + 2) // 18 (one maximum, one minimum)
-#define ADC_RATIO          ((uint32_t) 806) /*ADC_RATIO = ( 3.3 * 1000 * 1000)/4095 */
-#define ADC_REF_VOLTAGE    (3300)  /*3.3V*/
+#define PHOTO_ADC_CHAN                 ADC1_CHANNEL_2
+#define PHOTO_ADC_SCHMITTTRIGG_CHAN    ADC1_SCHMITTTRIG_CHANNEL2
+
+#define ADC_SHIFT_NUM       4
+#define ADC_SAMPLE_COUNT    ((1 << ADC_SHIFT_NUM) + 2) // 18 (one maximum, one minimum)
+#define ADC_RATIO           ((uint32_t) 806) /*ADC_RATIO = ( 3.3 * 1000 * 1000)/4095 */
+#define ADC_REF_VOLTAGE     (3300)  /*3.3V*/
+#define PHOTO_RES_THRESHOLD (25)    /*25K*/
 /* Private macro -------------------------------------------------------------*/
 #ifndef MAX
 #define MAX(x, y)                 (((x) > (y)) ? (x) : (y))
@@ -29,9 +32,18 @@
 #define MIN(x, y)                 (((x) < (y)) ? (x) : (y))
 #endif
 /* Private variables ---------------------------------------------------------*/
-
+PhotoControl_t PhotoDev =
+{
+  .hardLink.port    = GPIOB,
+  .hardLink.pin     = GPIO_PIN_7,
+  .hardLink.mode    = GPIO_MODE_IN_FL_NO_IT,
+  .open             = PhotoADC_Open,
+  .close            = PhotoADC_Close,
+  .GetState         = GetPhotoState,
+  .state            = DAY
+};
 /* Private macro -------------------------------------------------------------*/
-void PhotoADC_Init(HardLink_t *hardlink);
+void ADC_Init(PhotoControl_t *dev);
 void PhotoADC_Open(void);
 void PhotoADC_Close(void);
 uint16_t GetADC_Vol(void);
@@ -45,10 +57,10 @@ uint16_t GetADC_Vol(void);
 *
 * @return
 */
-void PhotoADC_Init(HardLink_t *hardlink)
+void ADC_Init(PhotoControl_t *dev)
 {
   /*ADC检测相关pin*/
-  GPIO_Init(hardlink->port,hardlink->pin,hardlink->mode);
+  GPIO_Init(dev->hardLink.port,dev->hardLink.pin,dev->hardLink.mode);
 }
 
 /*******************************************************************************
@@ -67,9 +79,13 @@ void PhotoADC_Open(void)
 
   /* Init ADC1 peripheral */
   /* Disable SchmittTrigger for ADC_Channel, to save power */
-  ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS,PHOTO_ADC_CHANNEL,ADC1_PRESSEL_FCPU_D2,
-            ADC1_EXTTRIG_TIM,ENABLE, ADC1_ALIGN_RIGHT,
-            ADC1_SCHMITTTRIG_CHANNEL3,ENABLE);
+  ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS,
+            PHOTO_ADC_CHAN,
+            ADC1_PRESSEL_FCPU_D2,
+            ADC1_EXTTRIG_TIM,ENABLE,
+            ADC1_ALIGN_RIGHT,
+            PHOTO_ADC_SCHMITTTRIGG_CHAN,
+            ENABLE);
 }
 
 /*******************************************************************************
@@ -155,17 +171,30 @@ uint16_t GetADCVol(void)
 enPhotoState GetPhotoState(void)
 {
   uint16_t voltage = 0;
+  uint16_t photo_res = 0;/*KΩ*/
   enPhotoState state = DAY;
 
   voltage = GetADCVol();
 
-  if(voltage > ADC_REF_VOLTAGE)
+  if(voltage >= ADC_REF_VOLTAGE)
   {
-    voltage = 0;
+    voltage = ADC_REF_VOLTAGE;
+    state = NIGHT;
+
+    return state;
   }
 
+  /*分压原理，计算光敏电阻阻值：voltage / R = 3300 / (10 + R)*/
+  photo_res = 10 * voltage / (ADC_REF_VOLTAGE - voltage);
 
-
+  if(photo_res <= PHOTO_RES_THRESHOLD)
+  {
+    state = DAY;
+  }
+  else
+  {
+    state = NIGHT;
+  }
 
   return state;
 }
