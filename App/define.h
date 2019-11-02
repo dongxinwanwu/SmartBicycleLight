@@ -12,6 +12,18 @@
 #define _DEFINE_H
 
 #include "stm8s.h"
+
+#ifndef BV
+#define BV(n)      (1 << (n))
+#endif
+
+#ifndef MAX
+#define MAX(x, y)                 (((x) > (y)) ? (x) : (y))
+#endif
+
+#ifndef MIN
+#define MIN(x, y)                 (((x) < (y)) ? (x) : (y))
+#endif
 /* Private typedef -----------------------------------------------------------*/
 /*****************************************************************************/
 
@@ -20,7 +32,7 @@ typedef enum
 {
   OFF = (uint8_t)0x00,
   ON  = (uint8_t)0x01
-}LedState;
+}enLedState;
 
 /*Ó²¼þÎïÀíIOÅäÖÃ*/
 typedef struct

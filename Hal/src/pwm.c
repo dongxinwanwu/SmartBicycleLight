@@ -31,10 +31,10 @@
 void PWM_Init(void)
 {
   /* GPIOD configuration: TIM1 channel 1 (PD2), channel 2 (PD4) and channel 3 (PD5) */
-  GPIO_Init(PWM_LEFT_LED1_PORT, PWM_LEFT_LED1_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-  GPIO_Init(PWM_LEFT_LED2_PORT, PWM_LEFT_LED2_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-  GPIO_Init(PWM_RIGHT_LED1_PORT, PWM_RIGHT_LED1_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-  GPIO_Init(PWM_RIGHT_LED2_PORT, PWM_RIGHT_LED2_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+  GPIO_Init(PWM_LEFT_LIGHT1_PORT, PWM_LEFT_LIGHT1_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+  GPIO_Init(PWM_LEFT_LIGHT2_PORT, PWM_LEFT_LIGHT2_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+  GPIO_Init(PWM_RIGHT_LIGHT1_PORT, PWM_RIGHT_LIGHT1_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+  GPIO_Init(PWM_RIGHT_LIGHT2_PORT, PWM_RIGHT_LIGHT2_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
 
   /*pwm config*/
   PWM_Config(TIME_PWM_PERIOD);
@@ -82,10 +82,10 @@ void PWM_Config(uint16_t period)
 */
 void PWM_Enable(void)
 {
-  GPIO_WriteLow(PWM_LEFT_LED1_PORT, PWM_LEFT_LED1_PIN);
-  GPIO_WriteLow(PWM_LEFT_LED2_PORT, PWM_LEFT_LED2_PIN);
-  GPIO_WriteLow(PWM_RIGHT_LED1_PORT, PWM_RIGHT_LED1_PIN);
-  GPIO_WriteLow(PWM_RIGHT_LED2_PORT, PWM_RIGHT_LED2_PIN);
+  GPIO_WriteLow(PWM_LEFT_LIGHT1_PORT, PWM_LEFT_LIGHT1_PIN);
+  GPIO_WriteLow(PWM_LEFT_LIGHT2_PORT, PWM_LEFT_LIGHT2_PIN);
+  GPIO_WriteLow(PWM_RIGHT_LIGHT1_PORT, PWM_RIGHT_LIGHT1_PIN);
+  GPIO_WriteLow(PWM_RIGHT_LIGHT2_PORT, PWM_RIGHT_LIGHT2_PIN);
 
   /* Enable TIM1 outputs */
   TIM1_CtrlPWMOutputs(ENABLE);
@@ -105,10 +105,10 @@ void PWM_Enable(void)
 */
 void PWM_Disable(void)
 {
-  GPIO_WriteLow(PWM_LEFT_LED1_PORT, PWM_LEFT_LED1_PIN);
-  GPIO_WriteLow(PWM_LEFT_LED2_PORT, PWM_LEFT_LED2_PIN);
-  GPIO_WriteLow(PWM_RIGHT_LED1_PORT, PWM_RIGHT_LED1_PIN);
-  GPIO_WriteLow(PWM_RIGHT_LED2_PORT, PWM_RIGHT_LED2_PIN);
+  GPIO_WriteLow(PWM_LEFT_LIGHT1_PORT, PWM_LEFT_LIGHT1_PIN);
+  GPIO_WriteLow(PWM_LEFT_LIGHT2_PORT, PWM_LEFT_LIGHT2_PIN);
+  GPIO_WriteLow(PWM_RIGHT_LIGHT1_PORT, PWM_RIGHT_LIGHT1_PIN);
+  GPIO_WriteLow(PWM_RIGHT_LIGHT2_PORT, PWM_RIGHT_LIGHT2_PIN);
 
   /* Enable TIM1 outputs */
   TIM1_CtrlPWMOutputs(DISABLE);
@@ -140,9 +140,9 @@ void ResetPWM(void)
 *
 * @return
 */
-void SetLeftLed1PWM(uint16_t compare)
+void SetLeftLight1PWM(uint16_t compare)
 {
-  TIM1_SetCompare1(compare);
+  TIM1_SetCompare4(compare);
 }
 
 /*******************************************************************************
@@ -154,9 +154,9 @@ void SetLeftLed1PWM(uint16_t compare)
 *
 * @return
 */
-void SetLeftLed2PWM(uint16_t compare)
+void SetLeftLight2PWM(uint16_t compare)
 {
-  TIM1_SetCompare2(compare);
+  TIM1_SetCompare3(compare);
 }
 
 /*******************************************************************************
@@ -168,9 +168,9 @@ void SetLeftLed2PWM(uint16_t compare)
 *
 * @return
 */
-void SetRightLed1PWM(uint16_t compare)
+void SetRightLight1PWM(uint16_t compare)
 {
-  TIM1_SetCompare4(compare);
+  TIM1_SetCompare1(compare);
 }
 /*******************************************************************************
 * @fn   SetRightLed2PWM
@@ -181,7 +181,7 @@ void SetRightLed1PWM(uint16_t compare)
 *
 * @return
 */
-void SetRightLed2PWM(uint16_t compare)
+void SetRightLight2PWM(uint16_t compare)
 {
-  TIM1_SetCompare3(compare);
+  TIM1_SetCompare2(compare);
 }

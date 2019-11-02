@@ -10477,6 +10477,9 @@
                 <name>$PROJ_DIR$\..\Hal\inc\led.h</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Hal\inc\light_blink.h</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Hal\inc\lis3dh_driver.h</name>
             </file>
             <file>
@@ -10502,6 +10505,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Hal\src\led.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Hal\src\light_blink.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Hal\src\lis3dh_driver.c</name>

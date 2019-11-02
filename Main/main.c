@@ -54,7 +54,7 @@ void main(void)
   enableInterrupts();
 
   /*init mems*/
-  system_start_timer(USERAPP_LIS3DH_INIT_EVT,TIMER_ONCE_MODE,LIS3DH_DELAY_INIT_TIME);
+  //system_start_timer(USERAPP_LIS3DH_INIT_EVT,TIMER_ONCE_MODE,LIS3DH_DELAY_INIT_TIME);
 
   /*reload wdt*/
   system_start_timer(USERAPP_RELOAD_WDT_EVT,TIMER_AUTO_MODE,RELOAD_WDT_TIME);
@@ -87,8 +87,14 @@ void SysBspInit(void)
   SysClock_Config();
   SysPeriphDeInit();
 
+  PWM_Init();
+  PWM_Enable();
+
   Led_Init(&PhotoLed);
   ADC_Init(&PhotoDev);
+
+  HalKeyInit(&OnOffKey,UserAppHandleKeys);
+
   /*user timer*/
   SystemTimer_Config();
   system_timer_init(ProcessSystemTimeEvent);
@@ -125,13 +131,13 @@ void SysClock_Config(void)
 void SysPeriphDeInit(void)
 {
 	/*Deinit io*/
-	GPIO_DeInit(GPIOA);
 	GPIO_DeInit(GPIOB);
 	GPIO_DeInit(GPIOC);
 	GPIO_DeInit(GPIOD);
 	GPIO_DeInit(GPIOE);
-	GPIO_DeInit(GPIOF);
+
   ADC1_DeInit();
+  TIM4_DeInit();
   SPI_DeInit();
   EXTI_DeInit();
 }
@@ -179,6 +185,7 @@ void assert_failed(u8* file, u32 line)
   /* Infinite loop */
   while (1)
   {
+
   }
 }
 #endif

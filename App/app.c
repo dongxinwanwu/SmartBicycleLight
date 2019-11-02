@@ -19,8 +19,15 @@
 void System_eventloop_hook(void);
 uint16_t ProcessSystemTimeEvent(uint16_t event_id);
 void UserAppHandleKeys(uint8_t keys,UserKeyState_t state);
-
+void UserBicycleControl(BicycleState_t *state);
 /* Private variables ---------------------------------------------------------*/
+BicycleState_t BicycleState =
+{
+  .sensorstate  = 0,
+  .turnstate    = WIRE_TURN_NONE,
+  .memsstate    = 0,
+  .photostate   = DAY
+};
 /*******************************************************************************
 * @fn     System_eventloop_hook(void)
 *
@@ -110,25 +117,17 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
     /*光照信息采集*/
     PhotoDev.open();
     PhotoDev.state = PhotoDev.GetState();
-
-    if(PhotoDev.state == DAY)
-    {
-      /*白天*/
-      LedControl(&PhotoLed.hardLink,SET);
-    }
-    else if(PhotoDev.state == NIGHT)
-    {
-      /*晚上*/
-      LedControl(&PhotoLed.hardLink,RESET);
-    }
-    else
-    {
-
-    }
+    PhotoDev.process(PhotoDev.state);
     PhotoDev.close();
 
     system_start_timer(USERAPP_PHOTO_COLLECT_EVT,TIMER_ONCE_MODE,PHOTO_CHECK_LOOP_TIME);
     return events ^ USERAPP_PHOTO_COLLECT_EVT;
+  }
+
+  if(events & USERAPP_LIGHT_BLINK_EVT)
+  {
+    LightBlinkMode(&LightBlinkCtrl);
+    return events ^ USERAPP_LIGHT_BLINK_EVT;
   }
 
   return 0;
@@ -156,6 +155,76 @@ void UserAppHandleKeys(uint8_t keys,UserKeyState_t state)
   }
 }
 
+/*******************************************************************************
+* @fn     PhotoState_Process
+*
+* @brief  PhotoState_Process
+*
+* @param
+*
+* @return
+*/
+void PhotoState_Process(enPhotoState state)
+{
+  switch(state)
+  {
+  case DAY:
+    {
+      /*白天*/
+      LedControl(&PhotoLed.hardLink,SET);
+
+      BicycleState.sensorstate.PhotoSensor = 1;
+      BicycleState.photostate = DAY;
+      UserBicycleControl(&BicycleState);
+    }
+    break;
+
+  case NIGHT:
+    {
+      /*晚上*/
+      LedControl(&PhotoLed.hardLink,RESET);
+
+      BicycleState.sensorstate.PhotoSensor = 1;
+      BicycleState.photostate = NIGHT;
+      UserBicycleControl(&BicycleState);
+    }
+    break;
+
+  default:
+    break;
+  }
+}
+
+/*******************************************************************************
+* @fn     UserBicycleControl
+*
+* @brief  UserBicycleControl
+*
+* @param
+*
+* @return
+*/
+void UserBicycleControl(BicycleState_t *state)
+{
+  if(state->sensorstate.turn == 1)
+  {
+
+  }
+  else if(state->sensorstate.MEMSSensor == 1)
+  {
+
+
+  }
+  else if(state->sensorstate.PhotoSensor == 1)
+  {
+
+
+  }
+  else
+  {
+
+  }
+}
 /**
   * @}
   */

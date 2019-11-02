@@ -56,9 +56,9 @@ void Led_Init(LedDeviceControl_t *leddevice)
 *
 * @return
 */
-LedState LedControl(HardLink_t *hardlink, BitAction GPIO_BitVal)
+enLedState LedControl(HardLink_t *hardlink, BitAction GPIO_BitVal)
 {
-  LedState state = OFF;
+  enLedState state = OFF;
 
   if(GPIO_BitVal == SET)
   {

@@ -26,6 +26,7 @@ typedef void (*Photo_Init)(HardLink_t *hardlink);
 typedef void (*Photo_Open)(void);
 typedef void (*Photo_Close)(void);
 typedef enPhotoState (*Photo_GetState)(void);
+typedef void (*Photo_Process)(enPhotoState state);
 /*****************************************************************************/
 typedef struct
 {
@@ -33,6 +34,7 @@ typedef struct
   Photo_Open open;      /*¿ª*/
   Photo_Close close;    /*¹Ø*/
   Photo_GetState GetState;
+  Photo_Process process;
   enPhotoState state;
 }PhotoControl_t;
 /*****************************************************************************/
@@ -56,4 +58,8 @@ void PhotoADC_Close(void);
  */
 enPhotoState GetPhotoState(void);
 
+/*! \brief Photo State Process
+ *
+ */
+void PhotoState_Process(enPhotoState state);
 #endif

@@ -15,7 +15,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /*****************************************************************************/
 /*****************************************************************************/
-typedef LedState (*DeviceControl)(HardLink_t *hardlink, BitAction GPIO_BitVal);
+typedef enLedState (*DeviceControl)(HardLink_t *hardlink, BitAction GPIO_BitVal);
 
 typedef struct
 {
@@ -26,7 +26,7 @@ typedef struct
 {
   HardLink_t hardLink;  /*硬件连接*/
   DevCtrl_t Ctrl;       /*控制方法*/
-  LedState state;        /*设备状态*/
+  enLedState state;        /*设备状态*/
 }LedDeviceControl_t;
 
 /* Private define ------------------------------------------------------------*/
@@ -42,6 +42,6 @@ extern LedDeviceControl_t PhotoLed;
 
 /* Public functions ----------------------------------------------------------*/
 void Led_Init(LedDeviceControl_t *leddevice);
-LedState LedControl(HardLink_t *hardlink, BitAction GPIO_BitVal);
+enLedState LedControl(HardLink_t *hardlink, BitAction GPIO_BitVal);
 #endif
 
