@@ -54,6 +54,18 @@ typedef struct
   MEMSState_t memsstate;
   enPhotoState photostate;
 }BicycleState_t;
+
+/*设备工作模式*/
+typedef enum
+{
+  NormalMode = (uint8_t)0x01,/*正常模式*/
+  HaltMode   = (uint8_t)0x02 /*待机模式（睡眠模式）*/
+}DeviceWorkMode;
+
+typedef struct
+{
+  DeviceWorkMode workMode;
+}UserWorkMode_t;
 /*****************************************************************************/
 extern void System_eventloop_hook(void);
 extern uint16_t ProcessSystemTimeEvent(uint16_t event_id);

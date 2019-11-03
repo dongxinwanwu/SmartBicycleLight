@@ -54,7 +54,7 @@ void main(void)
   enableInterrupts();
 
   /*init mems*/
-  //system_start_timer(USERAPP_LIS3DH_INIT_EVT,TIMER_ONCE_MODE,LIS3DH_DELAY_INIT_TIME);
+  system_start_timer(USERAPP_LIS3DH_INIT_EVT,TIMER_ONCE_MODE,LIS3DH_DELAY_INIT_TIME);
 
   /*reload wdt*/
   system_start_timer(USERAPP_RELOAD_WDT_EVT,TIMER_AUTO_MODE,RELOAD_WDT_TIME);

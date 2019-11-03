@@ -23,6 +23,8 @@
 #define RELOAD_WDT_TIME                       200u
 #define LIS3DH_DELAY_INIT_TIME                20u
 #define PHOTO_CHECK_LOOP_TIME                 500u
+#define LIS3DH_CHECK_LOOP_TIME                300u
+#define WIRELESS_COMM_CHECK_LOOP_TIME         300u
 #define LIGHT_FLASH_BLINK_TIME                300u
 #define LIGHT_FAST_BLINK_TIME                 600u
 #define LIGHT_SLOW_BLINK_TIME                 1000u
