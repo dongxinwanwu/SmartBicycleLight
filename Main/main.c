@@ -59,9 +59,6 @@ void main(void)
   /*reload wdt*/
   system_start_timer(USERAPP_RELOAD_WDT_EVT,TIMER_AUTO_MODE,RELOAD_WDT_TIME);
 
-  /*start check photo*/
-  system_start_timer(USERAPP_PHOTO_COLLECT_EVT,TIMER_ONCE_MODE,PHOTO_CHECK_LOOP_TIME);
-
   /*Infinite loop */
   while (1)
   {
@@ -87,13 +84,23 @@ void SysBspInit(void)
   SysClock_Config();
   SysPeriphDeInit();
 
-  PWM_Init();
-  PWM_Enable();
-
+  /*led*/
   Led_Init(&PhotoLed);
+
+  for(uint8_t i = 0; i < LIGHT_NUM; i++)
+  {
+    Led_Init(&DirLedTab[i]);
+    LedControl(&DirLedTab[i].hardLink,RESET);
+  }
+
+  /*photo sensor*/
   ADC_Init(&PhotoDev);
 
+  /*key*/
   HalKeyInit(&OnOffKey,UserAppHandleKeys);
+
+  /*spi*/
+  Soft_SPI_Init();
 
   /*user timer*/
   SystemTimer_Config();
@@ -113,6 +120,7 @@ void SysClock_Config(void)
 {
   CLK_DeInit();
   /* 启动时，主时钟源默认为HSI RC时钟的8分频，即fHSI/8 */
+  CLK_HSICmd(ENABLE);
   /*master clock*/
   CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1); /*HSI= 16MHZ*/
   /*cpu clock*/

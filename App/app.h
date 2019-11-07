@@ -19,11 +19,21 @@
 #include "key.h"
 #include "led.h"
 #include "adc.h"
-#include "pwm.h"
 #include "debug.h"
 #include "lis3dh_driver.h"
 #include "light_blink.h"
+#include "spi.h"
 /*****************************************************************************/
+/*LIS3DH_FULLSCALE_4 = ±4g = 8g = 8000mg*/
+#define MEMS_RATIO           (0.122) /*MEMS_RATIO = ( 8000 / 65536) */
+
+typedef struct
+{
+  double acc_x;
+  double acc_y;
+  double acc_z;
+} Accelerate_t;
+
 typedef enum
 {
   WIRE_TURN_NONE   = (uint8_t)0x00,
@@ -31,14 +41,15 @@ typedef enum
   WIRE_TURN_RIGHT  = (uint8_t)0x02,
 }enWireTurnState;
 
-typedef struct
+typedef enum
 {
-  uint8_t Stop        :1;
-  uint8_t SpeedUp     :1;
-  uint8_t SpeedDown   :1;
-  uint8_t UpHill      :1;
-  uint8_t DownHill    :1;
-}MEMSState_t;
+  STOP          = (uint8_t)0x00,
+  RUN           = (uint8_t)0x01,
+  SPEED_UP      = (uint8_t)0x02,
+  SPEED_DOWM    = (uint8_t)0x03,
+  UP_HILL       = (uint8_t)0x04,
+  DOWN_HILL     = (uint8_t)0x05
+}enMEMSState;
 
 typedef struct
 {
@@ -49,10 +60,10 @@ typedef struct
 
 typedef struct
 {
-  SensorState_t sensorstate;
+  SensorState_t   sensorstate;
   enWireTurnState turnstate;
-  MEMSState_t memsstate;
-  enPhotoState photostate;
+  enMEMSState     memsstate;
+  enPhotoState    photostate;
 }BicycleState_t;
 
 /*设备工作模式*/

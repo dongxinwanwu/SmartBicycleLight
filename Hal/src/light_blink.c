@@ -9,7 +9,6 @@
 ******************************************************************************
 */
 #include "light_blink.h"
-#include "pwm.h"
 #include "timer.h"
 /* Private typedef -----------------------------------------------------------*/
 
@@ -26,8 +25,9 @@ LightBlinkCtrl_t LightBlinkCtrl =
 {
   .state      = LIGHT_OFF,
   .blinkstate = LIGHT_OFF,
-  .loopmode   = LOOP_MODE_NONE,
   .mode       = ALL_OFF,
+  .turnstate  = FINSHED,
+  .lightIdx   = 0,
   .loopNum    = 0
 };
 
@@ -77,15 +77,11 @@ void LightBlinkMode(LightBlinkCtrl_t *lightctrl)
 */
 void LightAllOff(LightBlinkCtrl_t *lightctrl)
 {
-  SetLeftLight1PWM(0);
-  SetLeftLight2PWM(0);
-  SetRightLight2PWM(0);
-  SetRightLight1PWM(0);
-
-  lightctrl->state[0] = LIGHT_OFF;
-  lightctrl->state[1] = LIGHT_OFF;
-  lightctrl->state[2] = LIGHT_OFF;
-  lightctrl->state[3] = LIGHT_OFF;
+  for(uint8_t i = 0; i < LIGHT_NUM; i++)
+  {
+    LedControl(&DirLedTab[i].hardLink,RESET);
+    lightctrl->state[i] = LIGHT_OFF;
+  }
 }
 
 /*******************************************************************************
@@ -99,15 +95,11 @@ void LightAllOff(LightBlinkCtrl_t *lightctrl)
 */
 void LightAllOn(LightBlinkCtrl_t *lightctrl)
 {
-  SetLeftLight1PWM(TIME_PWM_PERIOD);
-  SetLeftLight2PWM(TIME_PWM_PERIOD);
-  SetRightLight2PWM(TIME_PWM_PERIOD);
-  SetRightLight1PWM(TIME_PWM_PERIOD);
-
-  lightctrl->state[0] = LIGHT_ON;
-  lightctrl->state[1] = LIGHT_ON;
-  lightctrl->state[2] = LIGHT_ON;
-  lightctrl->state[3] = LIGHT_ON;
+  for(uint8_t i = 0; i < LIGHT_NUM; i++)
+  {
+    LedControl(&DirLedTab[i].hardLink,SET);
+    lightctrl->state[i] = LIGHT_ON;
+  }
 }
 
 /*******************************************************************************
@@ -123,94 +115,39 @@ void LightTurnLeft(LightBlinkCtrl_t *lightctrl)
 {
   if(lightctrl->loopNum == 0)
   {
-    lightctrl->loopmode = RIGHT_LIGHT1_ON;
+    lightctrl->lightIdx = LIGHT_NUM - 1;
+    lightctrl->turnstate = NFINSHED;
   }
-  else if(lightctrl->loopNum >= LIGHT_LOOP_NUM *LIGHT_NUM)
+
+  /*off*/
+  for(uint8_t i = 0; i < LIGHT_NUM; i++)
   {
-    lightctrl->loopmode = LOOP_MODE_NONE;
-    lightctrl->loopNum = 0;
+    LedControl(&DirLedTab[i].hardLink,RESET);
+    lightctrl->state[i] = LIGHT_OFF;
   }
 
-  switch(lightctrl->loopmode)
-  {
-  case RIGHT_LIGHT1_ON:
-    {
-      lightctrl->loopmode = RIGHT_LIGHT2_ON;
-      lightctrl->state[0] = LIGHT_OFF;
-      lightctrl->state[1] = LIGHT_OFF;
-      lightctrl->state[2] = LIGHT_OFF;
-      lightctrl->state[3] = LIGHT_ON;
-
-      SetLeftLight1PWM(0);
-      SetLeftLight2PWM(0);
-      SetRightLight2PWM(0);
-      SetRightLight1PWM(TIME_PWM_PERIOD);
-    }
-    break;
-  case RIGHT_LIGHT2_ON:
-    {
-      lightctrl->loopmode = LEFT_LIGHT2_ON;
-      lightctrl->state[0] = LIGHT_OFF;
-      lightctrl->state[1] = LIGHT_OFF;
-      lightctrl->state[2] = LIGHT_ON;
-      lightctrl->state[3] = LIGHT_OFF;
-
-      SetLeftLight1PWM(0);
-      SetLeftLight2PWM(0);
-      SetRightLight2PWM(TIME_PWM_PERIOD);
-      SetRightLight1PWM(0);
-    }
-    break;
-
-  case LEFT_LIGHT2_ON:
-    {
-      lightctrl->loopmode = LEFT_LIGHT1_ON;
-      lightctrl->state[0] = LIGHT_OFF;
-      lightctrl->state[1] = LIGHT_ON;
-      lightctrl->state[2] = LIGHT_OFF;
-      lightctrl->state[3] = LIGHT_OFF;
-
-      SetLeftLight1PWM(0);
-      SetLeftLight2PWM(TIME_PWM_PERIOD);
-      SetRightLight2PWM(0);
-      SetRightLight1PWM(0);
-    }
-    break;
-  case LEFT_LIGHT1_ON:
-    {
-      lightctrl->loopmode = RIGHT_LIGHT1_ON;
-      lightctrl->state[0] = LIGHT_ON;
-      lightctrl->state[1] = LIGHT_OFF;
-      lightctrl->state[2] = LIGHT_OFF;
-      lightctrl->state[3] = LIGHT_OFF;
-
-      SetLeftLight1PWM(TIME_PWM_PERIOD);
-      SetLeftLight2PWM(0);
-      SetRightLight2PWM(0);
-      SetRightLight1PWM(0);
-    }
-    break;
-  case LOOP_MODE_NONE:
-    {
-      lightctrl->state[0] = LIGHT_OFF;
-      lightctrl->state[1] = LIGHT_OFF;
-      lightctrl->state[2] = LIGHT_OFF;
-      lightctrl->state[3] = LIGHT_OFF;
-
-      SetLeftLight1PWM(0);
-      SetLeftLight2PWM(0);
-      SetRightLight2PWM(0);
-      SetRightLight1PWM(0);
-    }
-    break;
-  default:
-    break;
-  }
-
-  if(lightctrl->loopmode != LOOP_MODE_NONE)
+  /*loop num*/
+  if(lightctrl->loopNum < LIGHT_LOOP_NUM *LIGHT_NUM)
   {
     lightctrl->loopNum++;
+
+    /*on*/
+    LedControl(&DirLedTab[lightctrl->lightIdx].hardLink,SET);
+    lightctrl->state[lightctrl->lightIdx] = LIGHT_ON;
+
+    /*next led index*/
+    lightctrl->lightIdx--;
+    if(lightctrl->lightIdx < 0)
+      lightctrl->lightIdx = LIGHT_NUM - 1;
+
     system_start_timer(USERAPP_LIGHT_BLINK_EVT,TIMER_ONCE_MODE,LIGHT_FLASH_BLINK_TIME);
+  }
+  else
+  {
+    lightctrl->lightIdx = 0;
+    lightctrl->loopNum = 0;
+    lightctrl->turnstate = FINSHED;
+    lightctrl->mode = ALL_OFF;
   }
 }
 
@@ -227,93 +164,39 @@ void LightTurnRight(LightBlinkCtrl_t *lightctrl)
 {
   if(lightctrl->loopNum == 0)
   {
-    lightctrl->loopmode = LEFT_LIGHT1_ON;
+    lightctrl->lightIdx = 0;
+    lightctrl->turnstate = NFINSHED;
   }
-  else if(lightctrl->loopNum >= LIGHT_LOOP_NUM *LIGHT_NUM)
+
+  /*off*/
+  for(uint8_t i = 0; i < LIGHT_NUM; i++)
   {
-    lightctrl->loopmode = LOOP_MODE_NONE;
-    lightctrl->loopNum = 0;
+    LedControl(&DirLedTab[i].hardLink,RESET);
+    lightctrl->state[i] = LIGHT_OFF;
   }
 
-  switch(lightctrl->loopmode)
-  {
-  case LEFT_LIGHT1_ON:
-    {
-      lightctrl->loopmode = LEFT_LIGHT2_ON;
-      lightctrl->state[0] = LIGHT_ON;
-      lightctrl->state[1] = LIGHT_OFF;
-      lightctrl->state[2] = LIGHT_OFF;
-      lightctrl->state[3] = LIGHT_OFF;
-
-      SetLeftLight1PWM(TIME_PWM_PERIOD);
-      SetLeftLight2PWM(0);
-      SetRightLight2PWM(0);
-      SetRightLight1PWM(0);
-    }
-    break;
-  case LEFT_LIGHT2_ON:
-    {
-      lightctrl->loopmode = RIGHT_LIGHT2_ON;
-      lightctrl->state[0] = LIGHT_OFF;
-      lightctrl->state[1] = LIGHT_ON;
-      lightctrl->state[2] = LIGHT_OFF;
-      lightctrl->state[3] = LIGHT_OFF;
-
-      SetLeftLight1PWM(0);
-      SetLeftLight2PWM(TIME_PWM_PERIOD);
-      SetRightLight2PWM(0);
-      SetRightLight1PWM(0);
-    }
-    break;
-  case RIGHT_LIGHT2_ON:
-    {
-      lightctrl->loopmode = RIGHT_LIGHT1_ON;
-      lightctrl->state[0] = LIGHT_OFF;
-      lightctrl->state[1] = LIGHT_OFF;
-      lightctrl->state[2] = LIGHT_ON;
-      lightctrl->state[3] = LIGHT_OFF;
-
-      SetLeftLight1PWM(0);
-      SetLeftLight2PWM(0);
-      SetRightLight2PWM(TIME_PWM_PERIOD);
-      SetRightLight1PWM(0);
-    }
-    break;
-  case RIGHT_LIGHT1_ON:
-    {
-      lightctrl->loopmode = LEFT_LIGHT1_ON;
-      lightctrl->state[0] = LIGHT_OFF;
-      lightctrl->state[1] = LIGHT_OFF;
-      lightctrl->state[2] = LIGHT_OFF;
-      lightctrl->state[3] = LIGHT_ON;
-
-      SetLeftLight1PWM(0);
-      SetLeftLight2PWM(0);
-      SetRightLight2PWM(0);
-      SetRightLight1PWM(TIME_PWM_PERIOD);
-    }
-    break;
-  case LOOP_MODE_NONE:
-    {
-      lightctrl->state[0] = LIGHT_OFF;
-      lightctrl->state[1] = LIGHT_OFF;
-      lightctrl->state[2] = LIGHT_OFF;
-      lightctrl->state[3] = LIGHT_OFF;
-
-      SetLeftLight1PWM(0);
-      SetLeftLight2PWM(0);
-      SetRightLight2PWM(0);
-      SetRightLight1PWM(0);
-    }
-    break;
-  default:
-    break;
-  }
-
-  if(lightctrl->loopmode != LOOP_MODE_NONE)
+  /*loop num*/
+  if(lightctrl->loopNum < LIGHT_LOOP_NUM *LIGHT_NUM)
   {
     lightctrl->loopNum++;
+
+    /*on*/
+    LedControl(&DirLedTab[lightctrl->lightIdx].hardLink,SET);
+    lightctrl->state[lightctrl->lightIdx] = LIGHT_ON;
+
+    /*next led index*/
+    lightctrl->lightIdx++;
+    if(lightctrl->lightIdx >= LIGHT_NUM)
+      lightctrl->lightIdx = 0;
+
     system_start_timer(USERAPP_LIGHT_BLINK_EVT,TIMER_ONCE_MODE,LIGHT_FLASH_BLINK_TIME);
+  }
+  else
+  {
+    lightctrl->lightIdx = 0;
+    lightctrl->loopNum = 0;
+    lightctrl->turnstate = FINSHED;
+    lightctrl->mode = ALL_OFF;
   }
 }
 
@@ -341,13 +224,16 @@ void LightBlink(LightBlinkCtrl_t *lightctrl)
   default:
     break;
   }
-  if(lightctrl->mode == FAST_BLINK)
-  {
-    system_start_timer(USERAPP_LIGHT_BLINK_EVT,TIMER_ONCE_MODE,LIGHT_FAST_BLINK_TIME);
-  }
-  else
-  {
-    system_start_timer(USERAPP_LIGHT_BLINK_EVT,TIMER_ONCE_MODE,LIGHT_SLOW_BLINK_TIME);
-  }
 
+  switch(lightctrl->mode)
+  {
+  case FAST_BLINK:
+    system_start_timer(USERAPP_LIGHT_BLINK_EVT,TIMER_ONCE_MODE,LIGHT_FAST_BLINK_TIME);
+    break;
+  case SLOW_BLINK:
+    system_start_timer(USERAPP_LIGHT_BLINK_EVT,TIMER_ONCE_MODE,LIGHT_SLOW_BLINK_TIME);
+    break;
+  default:
+    break;
+  }
 }

@@ -43,9 +43,6 @@ void SPI_Mems_Write_Reg(u8_t Reg, u8_t Data);
 *******************************************************************************/
 void LIS3DH_Init(void)
 {
-  /*spi*/
-  Soft_SPI_Init();
-
   /*cs*/
   GPIO_Init(LIS3DH_SPI_CS_PORT, LIS3DH_SPI_CS_PIN,GPIO_MODE_OUT_PP_HIGH_FAST);
 
@@ -55,7 +52,7 @@ void LIS3DH_Init(void)
 
   LIS3DH_SetMode(LIS3DH_NORMAL);
 
-  LIS3DH_SetFullScale(LIS3DH_FULLSCALE_2);
+  LIS3DH_SetFullScale(LIS3DH_FULLSCALE_4);
 
   LIS3DH_SetAxis(LIS3DH_X_ENABLE | LIS3DH_Y_ENABLE | LIS3DH_Z_ENABLE);
 }

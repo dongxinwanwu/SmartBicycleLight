@@ -12,10 +12,10 @@
 #define _LIGHT_BLINK_H
 
 #include "define.h"
-
+#include "led.h"
 /******************************************************************************/
-#define LIGHT_NUM         4
-#define LIGHT_LOOP_NUM    4
+
+#define LIGHT_LOOP_NUM    8
 
 typedef enum
 {
@@ -35,20 +35,18 @@ typedef enum
 
 typedef enum
 {
-  LOOP_MODE_NONE  = (uint8_t)0x00,
-  LEFT_LIGHT1_ON  = (uint8_t)0x01,
-  LEFT_LIGHT2_ON  = (uint8_t)0x02,
-  RIGHT_LIGHT1_ON = (uint8_t)0x03,
-  RIGHT_LIGHT2_ON = (uint8_t)0x04
-}enLightLoopMode;
+  NFINSHED = (uint8_t)0x00,
+  FINSHED  = (uint8_t)0x01
+}enLightTurnState;
 
 typedef struct
 {
   enLightState state[LIGHT_NUM];/*L1 L2 R2 R1*/
   enLightState blinkstate;
-  enLightLoopMode loopmode;
   enLightBlinkMode mode;
-  uint8_t loopNum;
+  enLightTurnState turnstate;
+  int8_t lightIdx;
+  int8_t loopNum;
 }LightBlinkCtrl_t;
 /******************************************************************************/
 extern LightBlinkCtrl_t LightBlinkCtrl;

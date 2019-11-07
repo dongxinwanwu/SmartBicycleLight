@@ -22,23 +22,19 @@
 #define TIME_SOFT_TICK                        5u
 #define RELOAD_WDT_TIME                       200u
 #define LIS3DH_DELAY_INIT_TIME                20u
-#define PHOTO_CHECK_LOOP_TIME                 500u
-#define LIS3DH_CHECK_LOOP_TIME                300u
-#define WIRELESS_COMM_CHECK_LOOP_TIME         300u
+#define SENSOR_CHECK_LOOP_TIME                200u
 #define LIGHT_FLASH_BLINK_TIME                300u
 #define LIGHT_FAST_BLINK_TIME                 600u
 #define LIGHT_SLOW_BLINK_TIME                 1000u
 
-#define MAX_TIME_NUM                          10u
+#define MAX_TIME_NUM                          7u
 #define USERAPP_RELOAD_WDT_EVT                0X0001
 #define USERAPP_KEY_POLL_EVT                  0x0002
 #define USERAPP_KEY_CLICK_EVENT               0x0004
 #define USERAPP_KEY_HOLD_EVENT                0x0008
 #define USERAPP_LIS3DH_INIT_EVT               0X0010
-#define USERAPP_LIS3DH_COLLECT_EVT            0X0020
-#define USERAPP_WIRELESS_COMM_EVT             0X0040
-#define USERAPP_PHOTO_COLLECT_EVT             0X0080
-#define USERAPP_LIGHT_BLINK_EVT               0X0100
+#define USERAPP_SENSOR_CHECK_EVT              0X0020
+#define USERAPP_LIGHT_BLINK_EVT               0X0040
 
 /******************************************************************************/
 typedef enum

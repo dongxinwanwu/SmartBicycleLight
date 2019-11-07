@@ -35,6 +35,7 @@
 
 #define LIS3DH_SPI_CS_LOW()     (GPIO_WriteLow(LIS3DH_SPI_CS_PORT,LIS3DH_SPI_CS_PIN))
 #define LIS3DH_SPI_CS_HIGH()    (GPIO_WriteHigh(LIS3DH_SPI_CS_PORT,LIS3DH_SPI_CS_PIN))
+#define LIS3DH_DEFAULT_ID_REG   0x33
 /* Exported types ------------------------------------------------------------*/
 
 //these could change accordingly with the architecture

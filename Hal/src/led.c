@@ -25,6 +25,41 @@ LedDeviceControl_t PhotoLed =
   .Ctrl           = LedControl,
   .state          = OFF
 };
+
+/*转向指示灯*/
+LedDeviceControl_t DirLedTab[LIGHT_NUM] =
+{
+  {
+    .hardLink.port  = GPIOC,
+    .hardLink.pin   = GPIO_PIN_4,
+    .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+    .Ctrl           = LedControl,
+    .state          = OFF
+
+  },
+  {
+    .hardLink.port  = GPIOC,
+    .hardLink.pin   = GPIO_PIN_3,
+    .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+    .Ctrl           = LedControl,
+    .state          = OFF
+  },
+  {
+    .hardLink.port  = GPIOC,
+    .hardLink.pin   = GPIO_PIN_2,
+    .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+    .Ctrl           = LedControl,
+    .state          = OFF
+  },
+  {
+    .hardLink.port  = GPIOC,
+    .hardLink.pin   = GPIO_PIN_1,
+    .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+    .Ctrl           = LedControl,
+    .state          = OFF
+  }
+};
+
 /* Private function prototypes -----------------------------------------------*/
 
 /*******************************************************************************
