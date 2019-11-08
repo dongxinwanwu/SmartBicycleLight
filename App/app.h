@@ -23,6 +23,7 @@
 #include "lis3dh_driver.h"
 #include "light_blink.h"
 #include "spi.h"
+#include "bk2425.h"
 /*****************************************************************************/
 /*LIS3DH_FULLSCALE_4 = ¡À4g = 8g = 8000mg*/
 #define MEMS_RATIO           (0.122) /*MEMS_RATIO = ( 8000 / 65536) */
