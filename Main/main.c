@@ -85,8 +85,6 @@ void SysBspInit(void)
   SysPeriphDeInit();
 
   /*led*/
-  Led_Init(&PhotoLed);
-
   for(uint8_t i = 0; i < LIGHT_NUM; i++)
   {
     Led_Init(&DirLedTab[i]);
@@ -139,10 +137,12 @@ void SysClock_Config(void)
 void SysPeriphDeInit(void)
 {
 	/*Deinit io*/
+  GPIO_DeInit(GPIOA);
 	GPIO_DeInit(GPIOB);
 	GPIO_DeInit(GPIOC);
 	GPIO_DeInit(GPIOD);
 	GPIO_DeInit(GPIOE);
+	GPIO_DeInit(GPIOF);
 
   ADC1_DeInit();
   TIM4_DeInit();

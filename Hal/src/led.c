@@ -17,25 +17,58 @@
 /* Private macro -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
-LedDeviceControl_t PhotoLed =
-{
-  .hardLink.port  = GPIOB,
-  .hardLink.pin   = GPIO_PIN_3,
-  .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
-  .Ctrl           = LedControl,
-  .state          = OFF
-};
-
 /*转向指示灯*/
 LedDeviceControl_t DirLedTab[LIGHT_NUM] =
 {
   {
-    .hardLink.port  = GPIOC,
-    .hardLink.pin   = GPIO_PIN_4,
+    .hardLink.port  = GPIOA,
+    .hardLink.pin   = GPIO_PIN_1,
     .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
     .Ctrl           = LedControl,
     .state          = OFF
 
+  },
+  {
+    .hardLink.port  = GPIOA,
+    .hardLink.pin   = GPIO_PIN_2,
+    .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+    .Ctrl           = LedControl,
+    .state          = OFF
+  },
+  {
+    .hardLink.port  = GPIOD,
+    .hardLink.pin   = GPIO_PIN_7,
+    .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+    .Ctrl           = LedControl,
+    .state          = OFF
+  },
+  {
+    .hardLink.port  = GPIOD,
+    .hardLink.pin   = GPIO_PIN_4,
+    .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+    .Ctrl           = LedControl,
+    .state          = OFF
+  },
+  {
+    .hardLink.port  = GPIOF,
+    .hardLink.pin   = GPIO_PIN_4,
+    .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+    .Ctrl           = LedControl,
+    .state          = OFF
+  },
+  {
+    .hardLink.port  = GPIOC,
+    .hardLink.pin   = GPIO_PIN_1,
+    .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+    .Ctrl           = LedControl,
+    .state          = OFF
+  },
+  {
+    .hardLink.port  = GPIOD,
+    .hardLink.pin   = GPIO_PIN_3,
+    .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+    .Ctrl           = LedControl,
+    .state          = OFF
   },
   {
     .hardLink.port  = GPIOC,
@@ -45,15 +78,15 @@ LedDeviceControl_t DirLedTab[LIGHT_NUM] =
     .state          = OFF
   },
   {
-    .hardLink.port  = GPIOC,
-    .hardLink.pin   = GPIO_PIN_2,
+    .hardLink.port  = GPIOB,
+    .hardLink.pin   = GPIO_PIN_1,
     .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
     .Ctrl           = LedControl,
     .state          = OFF
   },
   {
-    .hardLink.port  = GPIOC,
-    .hardLink.pin   = GPIO_PIN_1,
+    .hardLink.port  = GPIOB,
+    .hardLink.pin   = GPIO_PIN_2,
     .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
     .Ctrl           = LedControl,
     .state          = OFF

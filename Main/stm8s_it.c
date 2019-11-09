@@ -128,8 +128,17 @@ INTERRUPT_HANDLER(EXTI_PORTA_IRQHandler, 3)
 INTERRUPT_HANDLER(EXTI_PORTB_IRQHandler, 4)
 {
   /* In order to detect unexpected events during development,
-     it is recommended to set a breakpoint on the following instruction.
+  it is recommended to set a breakpoint on the following instruction.
   */
+
+  /*延时消除抖动*/
+  UserTimingDelay(1600);
+
+  /* key interrupt*/
+  if(GPIO_ReadInputPin(OnOffKey.hardLink.port, OnOffKey.hardLink.pin) == RESET)
+  {
+    HAL_KEY_Callback(&OnOffKey);
+  }
 }
 
 /**
@@ -154,15 +163,6 @@ INTERRUPT_HANDLER(EXTI_PORTD_IRQHandler, 6)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
-
-  /*延时消除抖动*/
-  UserTimingDelay(1600);
-
-  /* key interrupt*/
-  if(GPIO_ReadInputPin(OnOffKey.hardLink.port, OnOffKey.hardLink.pin) == RESET)
-  {
-    HAL_KEY_Callback(&OnOffKey);
-  }
 }
 
 /**

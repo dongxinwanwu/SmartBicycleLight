@@ -15,14 +15,14 @@
 /*****************************************************************************/
 /*BK2425 PIN DEFINITION*/
 
-#define BK2425_IRQ_PORT         (GPIOB)
+#define BK2425_IRQ_PORT         (GPIOD)
 #define BK2425_IRQ_PIN          (GPIO_PIN_0)
 
-#define BK2425_EN_PORT          (GPIOD)
-#define BK2425_EN_PIN           (GPIO_PIN_0)
+#define BK2425_EN_PORT          (GPIOC)
+#define BK2425_EN_PIN           (GPIO_PIN_4)
 
-#define BK2425_SPI_CS_PORT  	  (GPIOE)
-#define BK2425_SPI_CS_PIN   	  (GPIO_PIN_5)
+#define BK2425_SPI_CS_PORT  	  (GPIOD)
+#define BK2425_SPI_CS_PIN   	  (GPIO_PIN_2)
 
 #define BK2425_SPI_CS_LOW()     (GPIO_WriteLow(BK2425_SPI_CS_PORT,BK2425_SPI_CS_PIN))
 #define BK2425_SPI_CS_HIGH()    (GPIO_WriteHigh(BK2425_SPI_CS_PORT,BK2425_SPI_CS_PIN))

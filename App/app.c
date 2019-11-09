@@ -316,8 +316,6 @@ void PhotoState_Process(enPhotoState state)
   case DAY:
     {
       /*°×Ìì*/
-      LedControl(&PhotoLed.hardLink,SET);
-
       BicycleState.sensorstate.PhotoSensor = 1;
       BicycleState.photostate = DAY;
     }
@@ -326,8 +324,6 @@ void PhotoState_Process(enPhotoState state)
   case NIGHT:
     {
       /*ÍíÉÏ*/
-      LedControl(&PhotoLed.hardLink,RESET);
-
       BicycleState.sensorstate.PhotoSensor = 1;
       BicycleState.photostate = NIGHT;
     }

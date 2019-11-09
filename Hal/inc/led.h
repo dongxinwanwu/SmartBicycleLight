@@ -14,7 +14,7 @@
 #include "define.h"
 /* Private typedef -----------------------------------------------------------*/
 /*****************************************************************************/
-#define LIGHT_NUM         4
+#define LIGHT_NUM         10
 /*****************************************************************************/
 typedef enLedState (*DeviceControl)(HardLink_t *hardlink, BitAction GPIO_BitVal);
 
@@ -34,7 +34,6 @@ typedef struct
 /* Evalboard I/Os configuration */
 
 /*led*/
-extern LedDeviceControl_t PhotoLed;
 extern LedDeviceControl_t DirLedTab[LIGHT_NUM];
 /* Private function prototypes -----------------------------------------------*/
 

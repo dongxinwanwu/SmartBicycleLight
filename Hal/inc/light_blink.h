@@ -15,7 +15,7 @@
 #include "led.h"
 /******************************************************************************/
 
-#define LIGHT_LOOP_NUM    8
+#define LIGHT_LOOP_NUM    4
 
 typedef enum
 {
@@ -41,7 +41,7 @@ typedef enum
 
 typedef struct
 {
-  enLightState state[LIGHT_NUM];/*L1 L2 R2 R1*/
+  enLightState state[LIGHT_NUM];/*LED1~LED10*/
   enLightState blinkstate;
   enLightBlinkMode mode;
   enLightTurnState turnstate;

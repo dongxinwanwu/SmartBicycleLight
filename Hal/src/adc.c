@@ -15,8 +15,8 @@
 /* Private typedef -----------------------------------------------------------*/
 
 /* Private define ------------------------------------------------------------*/
-#define PHOTO_ADC_CHAN                 ADC1_CHANNEL_2
-#define PHOTO_ADC_SCHMITTTRIGG_CHAN    ADC1_SCHMITTTRIG_CHANNEL2
+#define PHOTO_ADC_CHAN                 ADC1_CHANNEL_0
+#define PHOTO_ADC_SCHMITTTRIGG_CHAN    ADC1_SCHMITTTRIG_CHANNEL0
 
 #define ADC_SHIFT_NUM       4
 #define ADC_SAMPLE_COUNT    ((1 << ADC_SHIFT_NUM) + 2) // 18 (one maximum, one minimum)
@@ -29,7 +29,7 @@
 PhotoControl_t PhotoDev =
 {
   .hardLink.port    = GPIOB,
-  .hardLink.pin     = GPIO_PIN_7,
+  .hardLink.pin     = GPIO_PIN_0,
   .hardLink.mode    = GPIO_MODE_IN_FL_NO_IT,
   .open             = PhotoADC_Open,
   .close            = PhotoADC_Close,

@@ -16,10 +16,10 @@ void HalKeyPoll (void);
 /*系统开关机按键*/
 KeyDeviceControl_t  OnOffKey =
 {
-  .hardLink.port                = GPIOD,
-  .hardLink.pin                 = GPIO_PIN_7,
+  .hardLink.port                = GPIOB,
+  .hardLink.pin                 = GPIO_PIN_3,
   .hardLink.mode                = GPIO_MODE_IN_PU_IT,
-  .exitLink.exit_port           = EXTI_PORT_GPIOD,
+  .exitLink.exit_port           = EXTI_PORT_GPIOB,
   .exitLink.exit_Trigger        = EXTI_SENSITIVITY_RISE_FALL,
   .keyValue = HAL_KEY_SW_1
 };
