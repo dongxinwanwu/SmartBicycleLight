@@ -24,6 +24,7 @@ void BK2425_Init(void)
 {
   GPIO_Init(BK2425_SPI_CS_PORT,BK2425_SPI_CS_PIN,GPIO_MODE_OUT_PP_HIGH_FAST );
   GPIO_Init(BK2425_EN_PORT,BK2425_EN_PIN,GPIO_MODE_OUT_PP_HIGH_FAST );
+  GPIO_Init(BK2425_EN_PORT,BK2425_EN_PIN,GPIO_MODE_OUT_PP_HIGH_FAST );
 
   GPIO_WriteHigh(BK2425_SPI_CS_PORT,BK2425_SPI_CS_PIN);
   GPIO_WriteLow(BK2425_EN_PORT,BK2425_EN_PIN);
@@ -69,13 +70,19 @@ uint8_t BK2425_Write_Reg(uint8_t reg, uint8_t value)
 uint8_t BK2425_Write_Buf(uint8_t reg, uint32_t *pBuf, uint8_t bytes)
 {
   uint8_t status,i = 0;
-
+  /*cs low*/
   BK2425_SPI_CS_LOW();
+
+  /*write reg*/
   status = SPI_SendByte(reg);
+
+  /*write data*/
   for(i = 0; i < bytes; i++)
   {
     SPI_SendByte(*pBuf++);
   }
+
+  /*cs high*/
   BK2425_SPI_CS_HIGH();
 
   return(status);
@@ -94,15 +101,15 @@ uint8_t BK2425_Read_Reg(uint8_t reg)
 {
   uint8_t value;
 
- BK2425_SPI_CS_LOW();
+  BK2425_SPI_CS_LOW();
 
- SPI_SendByte(reg);
+  SPI_SendByte(reg);
 
- value = SPI_SendByte(0x00);
+  value = SPI_SendByte(0x00);
 
- BK2425_SPI_CS_HIGH();
+  BK2425_SPI_CS_HIGH();
 
- return(value);
+  return(value);
 }
 
 /*******************************************************************************
@@ -122,9 +129,9 @@ uint8_t BK2425_Read_Buf(uint8_t reg, uint32_t *pBuf, uint8_t bytes)
 
   status = SPI_SendByte(reg);
 
-  for(i=0;i<bytes;i++)
+  for(i = 0;i < bytes; i++)
   {
-    pBuf[i] = SPI_SendByte(0);
+    pBuf[i] = SPI_SendByte(0x00);
   }
 
   BK2425_SPI_CS_HIGH();
@@ -192,11 +199,13 @@ void BK2425_TX_Mode(void)
 *
 * @return none
 */
-uint8_t BK2425_RxPacket(u32 *rxbuf)
+uint8_t BK2425_RxPacket(uint32_t *rxbuf)
 {
   uint8_t state;
+
   state = BK2425_Read_Reg(STATUS);
-  BK2425_Write_Reg(WRITE_REG+STATUS,state);
+
+  BK2425_Write_Reg(WRITE_REG + STATUS,state);
 
   if(state & RX_DR)
   {
@@ -230,7 +239,7 @@ uint8_t BK2425_TxPacket(uint32_t *txbuf)
 
   state = BK2425_Read_Reg(STATUS);
 
-  BK2425_Write_Reg(WRITE_REG+STATUS, state);
+  BK2425_Write_Reg(WRITE_REG + STATUS, state);
 
   if(state & MAX_RT)
   {
@@ -243,39 +252,4 @@ uint8_t BK2425_TxPacket(uint32_t *txbuf)
     return TX_DS;
   }
   return 0XFF;
-}
-
-/*******************************************************************************
-* @fn     BK2425_check
-*
-* @brief
-*
-* @param
-*
-* @return none
-*/
-uint8_t BK2425_check(void)
-{
-  uint32_t z[5]={0xa5,0xa5,0xa5,0xa5,0xa5};
-  uint32_t zz[5]={0x00,0x00,0x00,0x00,0x00};
-  int i;
-
-  BK2425_Write_Buf(WRITE_REG+TX_ADDR,z,5);
-  BK2425_Read_Buf(TX_ADDR,zz,5);
-
-  for(i=0;i < 5;i++)
-  {
-    if(zz[i] != 0xa5)
-    {
-      break;
-    }
-  }
-  if(i!=5)
-  {
-    return 1;
-  }
-  else
-  {
-    return 0;
-  }
 }

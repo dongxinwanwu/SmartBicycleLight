@@ -89,6 +89,5 @@ void BK2425_RX_Mode(void);
 void BK2425_TX_Mode(void);
 uint8_t BK2425_RxPacket(uint32_t *rxbuf);
 uint8_t BK2425_TxPacket(uint32_t *txbuf);
-uint8_t BK2425_check(void);
 /******************************************************************************/
 #endif

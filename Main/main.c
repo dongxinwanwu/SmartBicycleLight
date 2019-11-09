@@ -98,7 +98,7 @@ void SysBspInit(void)
   HalKeyInit(&OnOffKey,UserAppHandleKeys);
 
   /*spi*/
-  Soft_SPI_Init();
+  Hard_SPI_Init();
 
   /*user timer*/
   SystemTimer_Config();

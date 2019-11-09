@@ -36,7 +36,7 @@
 /* Functions Prototypes                                                       */
 /******************************************************************************/
 /*! Initializes the SPI communication peripheral. */
-uint8_t Soft_SPI_Init(void);
+uint8_t Hard_SPI_Init(void);
 uint8_t SPI_SendByte(uint8_t Byte);
 #endif
 

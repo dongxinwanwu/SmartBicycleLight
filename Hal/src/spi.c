@@ -20,7 +20,7 @@ uint8_t Soft_SPI_SendByte(uint8_t data);
 /* Private function prototypes -----------------------------------------------*/
 
 /*******************************************************************************
-* @fn
+* @fn   Hard_SPI_Init
 *
 * @brief
 *
@@ -28,7 +28,7 @@ uint8_t Soft_SPI_SendByte(uint8_t data);
 *
 * @return
 */
-uint8_t Soft_SPI_Init(void)
+uint8_t Hard_SPI_Init(void)
 {
   /* Enable SPI CLK */
   CLK_PeripheralClockConfig(CLK_PERIPHERAL_SPI, ENABLE);
@@ -52,6 +52,15 @@ uint8_t Soft_SPI_Init(void)
 	return 1;
 }
 
+/*******************************************************************************
+* @fn   SPI_SendByte
+*
+* @brief
+*
+* @param
+*
+* @return
+*/
 uint8_t SPI_SendByte(uint8_t Byte)
 {
   uint8_t temp;
