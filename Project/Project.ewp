@@ -10486,6 +10486,9 @@
                 <name>$PROJ_DIR$\..\Hal\inc\lis3dh_driver.h</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Hal\inc\mems_queue.h</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Hal\inc\spi.h</name>
             </file>
             <file>
@@ -10514,6 +10517,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Hal\src\lis3dh_driver.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Hal\src\mems_queue.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Hal\src\spi.c</name>

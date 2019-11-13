@@ -40,7 +40,10 @@ UserWorkMode_t UserWorkMode =
   .workMode   = NormalMode
 };
 AxesRaw_t LIS3DH_SensorData = {0};
-Accelerate_t BicycleAccelerate = {0};
+
+MEMSQueue_t  BicycleMemsDataQueue;/*传感器采集数据*/
+Accelerate_t BicycleAccelerate = {0};/*最终处理数据*/
+
 /*******************************************************************************
 * @fn     System_eventloop_hook(void)
 *
@@ -110,6 +113,9 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
   if(events & USERAPP_LIS3DH_INIT_EVT)
   {
     LIS3DH_Init();
+
+    MemsQueue_Init(&BicycleMemsDataQueue);
+
     uint8_t lisid = 0;
     LIS3DH_GetWHO_AM_I(&lisid);
 
@@ -280,15 +286,29 @@ void UserProcessMemsData(void)
 {
   /*get Acceleration Raw data*/
   status_t response = LIS3DH_GetAccAxesRaw(&LIS3DH_SensorData);
+  MemsDataType acc_z_new = 0,acc_z_old = 0,acc_z_sum = 0;
 
   if(response == MEMS_SUCCESS)
   {
-    /*传感器有效数据的处理*/
-    BicycleAccelerate.acc_x = (double)LIS3DH_SensorData.AXIS_X * MEMS_RATIO;
-    BicycleAccelerate.acc_y = (double)LIS3DH_SensorData.AXIS_Y * MEMS_RATIO;
-    BicycleAccelerate.acc_z = (double)LIS3DH_SensorData.AXIS_Z * MEMS_RATIO;
+    /*实际安装，水平移动方向为Z*/
+    acc_z_new = (int32_t)LIS3DH_SensorData.AXIS_Z * MEMS_RATIO;
+    /*数据处理方案：循环队列，一直进;满队列后，开始出,然后平均数*/
+    /*push*/
+    MemsQueue_push(&BicycleMemsDataQueue,acc_z_new);
 
-    if(LIS3DH_SensorData.AXIS_Z >= 5000)
+    /*pop*/
+    if(MemsQueue_is_full(&BicycleMemsDataQueue))
+    {
+      MemsQueue_pop(&BicycleMemsDataQueue,&acc_z_old);
+
+      /*avg*/
+      for(uint8_t i = 0; i < BicycleMemsDataQueue.count; i++)
+        acc_z_sum = BicycleMemsDataQueue.data[i] >> MEMS_SHIFT_NUM;
+
+      BicycleAccelerate.acc_z = acc_z_sum;
+    }
+
+    if(BicycleAccelerate.acc_z >= 50)
     {
       BicycleState.sensorstate.MEMSSensor = 1;
       BicycleState.memsstate = RUN;

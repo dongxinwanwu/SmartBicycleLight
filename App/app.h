@@ -24,9 +24,11 @@
 #include "light_blink.h"
 #include "spi.h"
 #include "bk2425.h"
+#include "mems_queue.h"
 /*****************************************************************************/
-/*LIS3DH_FULLSCALE_4 = ¡À4g = 8g = 8000mg*/
-#define MEMS_RATIO           (0.122) /*MEMS_RATIO = ( 8000 / 65536) */
+/*LIS3DH_FULLSCALE_2 = ¡À2g = 4g = 4000mg*/
+#define MEMS_MULTIPLE        (1000)   /**/
+#define MEMS_RATIO           ((int32_t)61) /*MEMS_RATIO = MEMS_MULTIPLE *( 4000 / 65536) */
 
 typedef struct
 {
