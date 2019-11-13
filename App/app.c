@@ -299,8 +299,8 @@ void UserProcessMemsData(void)
     if(MemsQueue_is_full(&BicycleMemsDataQueue))
     {
       /*avg*/
-      for(uint8_t i = 0; i < MEMS_SHIFT_NUM; i++)
-        acc_z_sum = BicycleMemsDataQueue.data[i] >> MEMS_SHIFT_NUM;
+      for(uint8_t i = 0; i < MEMS_QUEUE_NUM; i++)
+        acc_z_sum += BicycleMemsDataQueue.data[i] >> MEMS_SHIFT_NUM;
 
       BicycleAccelerate.acc_z = acc_z_sum;
 
