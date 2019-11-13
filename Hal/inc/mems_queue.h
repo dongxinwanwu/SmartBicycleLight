@@ -43,5 +43,6 @@ uint8_t MemsQueue_push(MEMSQueue_t *queue,MemsDataType value);
 uint8_t MemsQueue_pop(MEMSQueue_t *queue,MemsDataType *value);
 uint8_t MemsQueue_is_empty(MEMSQueue_t *queue);
 uint8_t MemsQueue_is_full(MEMSQueue_t *queue);
+uint8_t MemsQueue_node_count(MEMSQueue_t *queue);
 #endif
 

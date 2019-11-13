@@ -53,6 +53,9 @@ uint8_t MemsQueue_Init(MEMSQueue_t *queue)
 */
 uint8_t MemsQueue_push(MEMSQueue_t *queue,MemsDataType value)
 {
+  if(MemsQueue_is_full(queue))
+    return 0;
+
   /*queue push*/
   queue->data[queue->tail] = value;
   queue->tail = (queue->tail + 1) % MEMS_QUEUE_NUM;
@@ -71,6 +74,8 @@ uint8_t MemsQueue_push(MEMSQueue_t *queue,MemsDataType value)
 */
 uint8_t MemsQueue_pop(MEMSQueue_t *queue,MemsDataType *value)
 {
+  if(MemsQueue_is_empty(queue))
+    return 0;
   /*queue pop*/
   *value = queue->data[queue->head];
   queue->head = (queue->head + 1) % MEMS_QUEUE_NUM;
@@ -105,5 +110,19 @@ uint8_t MemsQueue_is_empty(MEMSQueue_t *queue)
 uint8_t MemsQueue_is_full(MEMSQueue_t *queue)
 {
   return queue->count == MEMS_QUEUE_NUM;
+}
+
+/*******************************************************************************
+* @fn     MemsQueue_node_count
+*
+* @brief
+*
+* @param
+*
+* @return
+*/
+uint8_t MemsQueue_node_count(MEMSQueue_t *queue)
+{
+  return queue->count;
 }
 

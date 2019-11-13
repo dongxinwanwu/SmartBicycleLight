@@ -296,16 +296,16 @@ void UserProcessMemsData(void)
     /*push*/
     MemsQueue_push(&BicycleMemsDataQueue,acc_z_new);
 
-    /*pop*/
     if(MemsQueue_is_full(&BicycleMemsDataQueue))
     {
-      MemsQueue_pop(&BicycleMemsDataQueue,&acc_z_old);
-
       /*avg*/
-      for(uint8_t i = 0; i < BicycleMemsDataQueue.count; i++)
+      for(uint8_t i = 0; i < MEMS_SHIFT_NUM; i++)
         acc_z_sum = BicycleMemsDataQueue.data[i] >> MEMS_SHIFT_NUM;
 
       BicycleAccelerate.acc_z = acc_z_sum;
+
+      /*pop*/
+      MemsQueue_pop(&BicycleMemsDataQueue,&acc_z_old);
     }
 
     if(BicycleAccelerate.acc_z >= 50)
