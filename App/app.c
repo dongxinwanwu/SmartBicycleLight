@@ -221,6 +221,9 @@ void UserProcessHaltMode(void)
   /*关闭检测*/
   system_stop_timer(USERAPP_SENSOR_CHECK_EVT);
 
+  /*关闭指示灯*/
+  LightBlinkCtrl.mode = ALL_OFF;
+  system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
 }
 
 /*******************************************************************************

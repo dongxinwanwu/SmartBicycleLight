@@ -15,7 +15,7 @@
 #include "led.h"
 /******************************************************************************/
 
-#define LIGHT_LOOP_NUM    4
+#define LIGHT_LOOP_NUM    10
 
 typedef enum
 {

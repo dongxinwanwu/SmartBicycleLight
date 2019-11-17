@@ -23,7 +23,7 @@
 #define RELOAD_WDT_TIME                       200u
 #define LIS3DH_DELAY_INIT_TIME                20u
 #define SENSOR_CHECK_LOOP_TIME                200u
-#define LIGHT_FLASH_BLINK_TIME                300u
+#define LIGHT_FLASH_BLINK_TIME                150u
 #define LIGHT_FAST_BLINK_TIME                 600u
 #define LIGHT_SLOW_BLINK_TIME                 1000u
 

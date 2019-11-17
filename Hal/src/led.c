@@ -22,7 +22,7 @@ LedDeviceControl_t DirLedTab[LIGHT_NUM] =
 {
   {
     .hardLink.port  = GPIOA,
-    .hardLink.pin   = GPIO_PIN_1,
+    .hardLink.pin   = GPIO_PIN_2,
     .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
     .Ctrl           = LedControl,
     .state          = OFF
@@ -30,7 +30,7 @@ LedDeviceControl_t DirLedTab[LIGHT_NUM] =
   },
   {
     .hardLink.port  = GPIOA,
-    .hardLink.pin   = GPIO_PIN_2,
+    .hardLink.pin   = GPIO_PIN_1,
     .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
     .Ctrl           = LedControl,
     .state          = OFF

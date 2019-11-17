@@ -103,15 +103,15 @@ void LightAllOn(LightBlinkCtrl_t *lightctrl)
 }
 
 /*******************************************************************************
-* @fn     LightTurnLeft
+* @fn     LightTurnRight
 *
-* @brief  LightTurnLeft
+* @brief  LightTurnRight
 *
 * @param
 *
 * @return none
 */
-void LightTurnLeft(LightBlinkCtrl_t *lightctrl)
+void LightTurnRight(LightBlinkCtrl_t *lightctrl)
 {
   if(lightctrl->loopNum == 0)
   {
@@ -152,15 +152,15 @@ void LightTurnLeft(LightBlinkCtrl_t *lightctrl)
 }
 
 /*******************************************************************************
-* @fn     LightTurnRight
+* @fn     LightTurnLeft
 *
-* @brief  LightTurnRight
+* @brief  LightTurnLeft
 *
 * @param
 *
 * @return none
 */
-void LightTurnRight(LightBlinkCtrl_t *lightctrl)
+void LightTurnLeft(LightBlinkCtrl_t *lightctrl)
 {
   if(lightctrl->loopNum == 0)
   {
