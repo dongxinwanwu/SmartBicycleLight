@@ -20,12 +20,12 @@
 #define TIME_MAX_PERIOD                       3600000u/*1h = 1000ms * 60 * 60*/
 #define TIME_HARD_TICK                        1u
 #define TIME_SOFT_TICK                        5u
-#define RELOAD_WDT_TIME                       200u
-#define LIS3DH_DELAY_INIT_TIME                20u
+#define RELOAD_WDT_TIME                       100u
+#define LIS3DH_DELAY_INIT_TIME                2000u
 #define SENSOR_CHECK_LOOP_TIME                200u
 #define LIGHT_FLASH_BLINK_TIME                150u
-#define LIGHT_FAST_BLINK_TIME                 600u
-#define LIGHT_SLOW_BLINK_TIME                 1000u
+#define LIGHT_FAST_BLINK_TIME                 500u
+#define LIGHT_SLOW_BLINK_TIME                 1200u
 
 #define MAX_TIME_NUM                          7u
 #define USERAPP_RELOAD_WDT_EVT                0X0001

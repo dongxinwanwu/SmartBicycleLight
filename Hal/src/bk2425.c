@@ -45,6 +45,7 @@ uint8_t BK2425_Write_Reg(uint8_t reg, uint8_t value)
 
   /*cs low*/
   BK2425_SPI_CS_LOW();
+  UserTimingDelay(1);
 
   /*write reg*/
   status = SPI_SendByte(reg);
@@ -53,6 +54,7 @@ uint8_t BK2425_Write_Reg(uint8_t reg, uint8_t value)
   SPI_SendByte(value);
 
   /*cs high*/
+  UserTimingDelay(1);
   BK2425_SPI_CS_HIGH();
 
   return(status);
@@ -72,6 +74,7 @@ uint8_t BK2425_Write_Buf(uint8_t reg, uint32_t *pBuf, uint8_t bytes)
   uint8_t status,i = 0;
   /*cs low*/
   BK2425_SPI_CS_LOW();
+  UserTimingDelay(1);
 
   /*write reg*/
   status = SPI_SendByte(reg);
@@ -83,6 +86,7 @@ uint8_t BK2425_Write_Buf(uint8_t reg, uint32_t *pBuf, uint8_t bytes)
   }
 
   /*cs high*/
+  UserTimingDelay(1);
   BK2425_SPI_CS_HIGH();
 
   return(status);
@@ -102,11 +106,13 @@ uint8_t BK2425_Read_Reg(uint8_t reg)
   uint8_t value;
 
   BK2425_SPI_CS_LOW();
+  UserTimingDelay(1);
 
   SPI_SendByte(reg);
 
   value = SPI_SendByte(0x00);
 
+  UserTimingDelay(1);
   BK2425_SPI_CS_HIGH();
 
   return(value);
@@ -126,6 +132,7 @@ uint8_t BK2425_Read_Buf(uint8_t reg, uint32_t *pBuf, uint8_t bytes)
   uint8_t status,i;
 
   BK2425_SPI_CS_LOW();
+  UserTimingDelay(1);
 
   status = SPI_SendByte(reg);
 
@@ -134,6 +141,7 @@ uint8_t BK2425_Read_Buf(uint8_t reg, uint32_t *pBuf, uint8_t bytes)
     pBuf[i] = SPI_SendByte(0x00);
   }
 
+  UserTimingDelay(1);
   BK2425_SPI_CS_HIGH();
 
   return(status);
@@ -151,6 +159,7 @@ uint8_t BK2425_Read_Buf(uint8_t reg, uint32_t *pBuf, uint8_t bytes)
 void BK2425_RX_Mode(void)
 {
   BK2425_EN_LOW();
+  UserTimingDelay(1);
 
   BK2425_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);
   BK2425_Write_Reg(WRITE_REG + EN_AA, 0x01);
@@ -161,6 +170,7 @@ void BK2425_RX_Mode(void)
   BK2425_Write_Reg(WRITE_REG + CONFIG, 0x0f);
   BK2425_Write_Reg(WRITE_REG + STATUS, 0xff);
 
+  UserTimingDelay(1);
   BK2425_EN_HIGH();
 }
 
@@ -176,6 +186,7 @@ void BK2425_RX_Mode(void)
 void BK2425_TX_Mode(void)
 {
   BK2425_EN_LOW();
+  UserTimingDelay(1);
 
   BK2425_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);
   BK2425_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);
@@ -187,6 +198,7 @@ void BK2425_TX_Mode(void)
   BK2425_Write_Reg(WRITE_REG + RF_SETUP, 0x0f);
   BK2425_Write_Reg(WRITE_REG + CONFIG, 0x0e);
 
+  UserTimingDelay(1);
   BK2425_EN_HIGH();
 }
 
@@ -230,9 +242,11 @@ uint8_t BK2425_TxPacket(uint32_t *txbuf)
 {
   u8 state;
   BK2425_EN_LOW();
+  UserTimingDelay(1);
 
   BK2425_Write_Buf(WR_TX_PLOAD, txbuf, TX_PLOAD_WIDTH);
 
+  UserTimingDelay(1);
   BK2425_EN_HIGH();
 
   while(GPIO_ReadInputPin(BK2425_IRQ_PORT,BK2425_IRQ_PIN) == 1);

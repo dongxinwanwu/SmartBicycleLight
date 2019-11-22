@@ -26,6 +26,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "lis3dh_driver.h"
 #include "spi.h"
+#include "timer.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -69,6 +70,7 @@ u8_t SPI_Mems_Read_Reg(u8_t Reg)
   uint8_t data;
 
   LIS3DH_SPI_CS_LOW();
+  UserTimingDelay(1);
 
   /*write add*/
   SPI_SendByte(0x80 | Reg);
@@ -76,6 +78,7 @@ u8_t SPI_Mems_Read_Reg(u8_t Reg)
   /*read data*/
   data = SPI_SendByte(0x00);
 
+  UserTimingDelay(1);
   LIS3DH_SPI_CS_HIGH();
 
   return data;
@@ -91,6 +94,7 @@ u8_t SPI_Mems_Read_Reg(u8_t Reg)
 void SPI_Mems_Write_Reg(u8_t Reg, u8_t Data)
 {
   LIS3DH_SPI_CS_LOW();
+  UserTimingDelay(1);
 
   /*write add*/
   SPI_SendByte(Reg);
@@ -98,6 +102,7 @@ void SPI_Mems_Write_Reg(u8_t Reg, u8_t Data)
   /*write data*/
   SPI_SendByte(Data);
 
+  UserTimingDelay(1);
   LIS3DH_SPI_CS_HIGH();
 }
 
