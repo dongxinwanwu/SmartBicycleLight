@@ -17,9 +17,21 @@
 /* Private macro -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
+#if (defined DEBUG)
+LedDeviceControl_t OnOffLed =
+{
+  .hardLink.port  = GPIOA,
+  .hardLink.pin   = GPIO_PIN_2,
+  .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
+  .Ctrl           = LedControl,
+  .state          = OFF
+};
+#endif
+
 /*转向指示灯*/
 LedDeviceControl_t DirLedTab[LIGHT_NUM] =
 {
+#if (!defined DEBUG)
   {
     .hardLink.port  = GPIOA,
     .hardLink.pin   = GPIO_PIN_2,
@@ -28,6 +40,7 @@ LedDeviceControl_t DirLedTab[LIGHT_NUM] =
     .state          = OFF
 
   },
+#endif
   {
     .hardLink.port  = GPIOA,
     .hardLink.pin   = GPIO_PIN_1,
@@ -110,7 +123,7 @@ void Led_Init(LedDeviceControl_t *leddevice)
   GPIO_Init(leddevice->hardLink.port,leddevice->hardLink.pin,leddevice->hardLink.mode);
 
 	/*led control*/
-  leddevice->Ctrl.ledControl(&leddevice->hardLink,SET);
+  leddevice->Ctrl.ledControl(&leddevice->hardLink,OFF);
 
   leddevice->state = OFF;
 }
@@ -124,21 +137,21 @@ void Led_Init(LedDeviceControl_t *leddevice)
 *
 * @return
 */
-enLedState LedControl(HardLink_t *hardlink, BitAction GPIO_BitVal)
+enLedState LedControl(HardLink_t *hardlink, enLedState state)
 {
-  enLedState state = OFF;
+  enLedState rtnstate = OFF;
 
-  if(GPIO_BitVal == SET)
+  if(state == ON)
   {
     GPIO_WriteHigh(hardlink->port, hardlink->pin);
-    state = OFF;
+    rtnstate = ON;
   }
   else
   {
     GPIO_WriteLow(hardlink->port, hardlink->pin);
-    state = ON;
+    rtnstate = OFF;
   }
 
-  return state;
+  return rtnstate;
 }
 

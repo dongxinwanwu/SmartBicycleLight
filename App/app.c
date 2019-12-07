@@ -222,6 +222,9 @@ void UserProcessHaltMode(void)
   system_stop_timer(USERAPP_SENSOR_CHECK_EVT);
 
   /*关闭指示灯*/
+#if (defined DEBUG)
+  LedControl(&OnOffLed.hardLink,OFF);
+#endif
   LightBlinkCtrl.mode = ALL_OFF;
   system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
 }
@@ -237,6 +240,9 @@ void UserProcessHaltMode(void)
 */
 void UserProcessNormalMode(void)
 {
+#if (defined DEBUG)
+  LedControl(&OnOffLed.hardLink,ON);
+#endif
   /*开启检测*/
   system_start_timer(USERAPP_SENSOR_CHECK_EVT,TIMER_ONCE_MODE,SENSOR_CHECK_LOOP_TIME);
 }
@@ -311,7 +317,7 @@ void UserProcessMemsData(void)
       MemsQueue_pop(&BicycleMemsDataQueue,&acc_z_old);
     }
 
-    if(BicycleAccelerate.acc_z >= 50)
+    if(BicycleAccelerate.acc_z >= 20)
     {
       BicycleState.sensorstate.MEMSSensor = 1;
       BicycleState.memsstate = RUN;
@@ -415,9 +421,9 @@ void UserBicycleLightControl(BicycleState_t *state)
           switch(state->memsstate)
           {
           case STOP:
-            if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != SLOW_BLINK))
+            if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != ALL_ON))
             {
-              LightBlinkCtrl.mode = SLOW_BLINK;
+              LightBlinkCtrl.mode = ALL_ON;
               system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
             }
             break;

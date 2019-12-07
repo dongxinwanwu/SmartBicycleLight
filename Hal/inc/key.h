@@ -16,7 +16,7 @@
 #define HAL_APP_KEY_NUM                       1
 #define HAL_KEY_DEBOUNCE_VALUE                30u     //30ms
 #define HAL_KEY_CLICKED_VALUE                 1500u   //1000ms
-#define HAL_KEY_HOLD_VALUE                    6000u   //6.0s
+#define HAL_KEY_HOLD_VALUE                    2000u   //2.0s
 
 /* Buttons */
 typedef enum

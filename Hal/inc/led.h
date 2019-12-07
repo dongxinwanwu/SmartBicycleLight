@@ -14,9 +14,14 @@
 #include "define.h"
 /* Private typedef -----------------------------------------------------------*/
 /*****************************************************************************/
+#if (defined DEBUG)
+#define LIGHT_NUM         9
+#else
 #define LIGHT_NUM         10
+#endif
+
 /*****************************************************************************/
-typedef enLedState (*DeviceControl)(HardLink_t *hardlink, BitAction GPIO_BitVal);
+typedef enLedState (*DeviceControl)(HardLink_t *hardlink, enLedState state);
 
 typedef struct
 {
@@ -34,6 +39,7 @@ typedef struct
 /* Evalboard I/Os configuration */
 
 /*led*/
+extern LedDeviceControl_t OnOffLed;
 extern LedDeviceControl_t DirLedTab[LIGHT_NUM];
 /* Private function prototypes -----------------------------------------------*/
 
@@ -43,6 +49,6 @@ extern LedDeviceControl_t DirLedTab[LIGHT_NUM];
 
 /* Public functions ----------------------------------------------------------*/
 void Led_Init(LedDeviceControl_t *leddevice);
-enLedState LedControl(HardLink_t *hardlink, BitAction GPIO_BitVal);
+enLedState LedControl(HardLink_t *hardlink, enLedState state);
 #endif
 

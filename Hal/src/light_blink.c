@@ -79,7 +79,7 @@ void LightAllOff(LightBlinkCtrl_t *lightctrl)
 {
   for(uint8_t i = 0; i < LIGHT_NUM; i++)
   {
-    LedControl(&DirLedTab[i].hardLink,RESET);
+    LedControl(&DirLedTab[i].hardLink,OFF);
     lightctrl->state[i] = LIGHT_OFF;
   }
 }
@@ -97,7 +97,7 @@ void LightAllOn(LightBlinkCtrl_t *lightctrl)
 {
   for(uint8_t i = 0; i < LIGHT_NUM; i++)
   {
-    LedControl(&DirLedTab[i].hardLink,SET);
+    LedControl(&DirLedTab[i].hardLink,ON);
     lightctrl->state[i] = LIGHT_ON;
   }
 }
@@ -122,7 +122,7 @@ void LightTurnRight(LightBlinkCtrl_t *lightctrl)
   /*off*/
   for(uint8_t i = 0; i < LIGHT_NUM; i++)
   {
-    LedControl(&DirLedTab[i].hardLink,RESET);
+    LedControl(&DirLedTab[i].hardLink,OFF);
     lightctrl->state[i] = LIGHT_OFF;
   }
 
@@ -132,7 +132,7 @@ void LightTurnRight(LightBlinkCtrl_t *lightctrl)
     lightctrl->loopNum++;
 
     /*on*/
-    LedControl(&DirLedTab[lightctrl->lightIdx].hardLink,SET);
+    LedControl(&DirLedTab[lightctrl->lightIdx].hardLink,ON);
     lightctrl->state[lightctrl->lightIdx] = LIGHT_ON;
 
     /*next led index*/
@@ -171,7 +171,7 @@ void LightTurnLeft(LightBlinkCtrl_t *lightctrl)
   /*off*/
   for(uint8_t i = 0; i < LIGHT_NUM; i++)
   {
-    LedControl(&DirLedTab[i].hardLink,RESET);
+    LedControl(&DirLedTab[i].hardLink,OFF);
     lightctrl->state[i] = LIGHT_OFF;
   }
 
@@ -181,7 +181,7 @@ void LightTurnLeft(LightBlinkCtrl_t *lightctrl)
     lightctrl->loopNum++;
 
     /*on*/
-    LedControl(&DirLedTab[lightctrl->lightIdx].hardLink,SET);
+    LedControl(&DirLedTab[lightctrl->lightIdx].hardLink,ON);
     lightctrl->state[lightctrl->lightIdx] = LIGHT_ON;
 
     /*next led index*/
