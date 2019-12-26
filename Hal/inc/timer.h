@@ -22,12 +22,14 @@
 #define TIME_SOFT_TICK                        5u
 #define RELOAD_WDT_TIME                       100u
 #define LIS3DH_DELAY_INIT_TIME                2000u
-#define SENSOR_CHECK_LOOP_TIME                100u
+#define SENSOR_CHECK_LOOP_TIME                200u
 #define LIGHT_FLASH_BLINK_TIME                150u
 #define LIGHT_FAST_BLINK_TIME                 500u
-#define LIGHT_SLOW_BLINK_TIME                 1200u
+#define LIGHT_MEDIUM_BLINK_TIME               1200u
+#define LIGHT_SLOW_BLINK_TIME                 2000u
+#define LIGHT_BLINK_OFF_TIME                  120000u
 
-#define MAX_TIME_NUM                          7u
+#define MAX_TIME_NUM                          8u
 #define USERAPP_RELOAD_WDT_EVT                0X0001
 #define USERAPP_KEY_POLL_EVT                  0x0002
 #define USERAPP_KEY_CLICK_EVENT               0x0004
@@ -35,7 +37,7 @@
 #define USERAPP_LIS3DH_INIT_EVT               0X0010
 #define USERAPP_SENSOR_CHECK_EVT              0X0020
 #define USERAPP_LIGHT_BLINK_EVT               0X0040
-
+#define USERAPP_LIGHT_BLINK_OFF_EVT           0X0080
 /******************************************************************************/
 typedef enum
 {

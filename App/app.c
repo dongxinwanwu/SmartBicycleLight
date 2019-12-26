@@ -18,7 +18,7 @@
 /* Private functions ---------------------------------------------------------*/
 void System_eventloop_hook(void);
 uint16_t ProcessSystemTimeEvent(uint16_t event_id);
-void UserAppHandleKeys(uint8_t keys,UserKeyState_t state);
+void UserAppHandleKeys(uint8_t keys,UserKeyState_t state,uint8_t clicktimes);
 void UserBicycleLightControl(BicycleState_t *state);
 void UserKeyChangeWorkMode(UserWorkMode_t *mode);
 void UserProcessHaltMode(void);
@@ -30,6 +30,7 @@ void UserProcessMemsData(void);
 BicycleState_t BicycleState =
 {
   .sensorstate  = 0,
+  .stopblinkstate = STOP_BLINK_OFF,
   .turnstate    = WIRE_TURN_NONE,
   .memsstate    = STOP,
   .photostate   = DAY
@@ -146,6 +147,13 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
     return events ^ USERAPP_LIGHT_BLINK_EVT;
   }
 
+  if(events & USERAPP_LIGHT_BLINK_OFF_EVT)
+  {
+    LightBlinkCtrl.mode = ALL_OFF;
+    LightBlinkMode(&LightBlinkCtrl);
+    return events ^ USERAPP_LIGHT_BLINK_OFF_EVT;
+  }
+
   return 0;
 }
 
@@ -158,14 +166,31 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
 *
 * @return
 */
-void UserAppHandleKeys(uint8_t keys,UserKeyState_t state)
+void UserAppHandleKeys(uint8_t keys,UserKeyState_t state,uint8_t clicktimes)
 {
   if(keys & OnOffKey.keyValue)
   {
-    /*开关机按键*/
-    if(state == LONG_HOLD)
+    if(state == CLICK)
     {
-      /*按键长按，切换工作模式*/
+      /*按键单击，切换工作模式*/
+      if(clicktimes == 2)
+      {
+        /**/
+        if(BicycleState.stopblinkstate == STOP_BLINK_ON)
+        {
+          BicycleState.stopblinkstate = STOP_BLINK_OFF;
+        }
+        else
+        {
+          BicycleState.stopblinkstate = STOP_BLINK_ON;
+        }
+        BicycleState.sensorstate.stopBlink = 1;
+        UserBicycleLightControl(&BicycleState);
+      }
+    }
+    else if(state == LONG_HOLD)
+    {
+      /*按键长按，开关机*/
       UserKeyChangeWorkMode(&UserWorkMode);
     }
   }
@@ -410,11 +435,7 @@ void UserBicycleLightControl(BicycleState_t *state)
           LightBlinkCtrl.mode = ALL_OFF;
           system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
         }
-      }
-      break;
-
-    case NIGHT:
-      {
+        /*白天停车闪灯*/
         if(state->sensorstate.MEMSSensor == 1)
         {
           state->sensorstate.MEMSSensor = 0;
@@ -423,8 +444,42 @@ void UserBicycleLightControl(BicycleState_t *state)
           case STOP:
             if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != ALL_ON))
             {
-              LightBlinkCtrl.mode = ALL_ON;
+              LightBlinkCtrl.mode = MEDIUM_BLINK;
               system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+              system_start_timer(USERAPP_LIGHT_BLINK_OFF_EVT,TIMER_ONCE_MODE,LIGHT_BLINK_OFF_TIME);
+            }
+            break;
+          default:
+            break;
+          }
+        }
+      }
+      break;
+
+    case NIGHT:
+      {
+        if(state->sensorstate.stopBlink == 1)
+        {
+          state->sensorstate.stopBlink = 0;
+
+          if(state->stopblinkstate == STOP_BLINK_ON)
+            LightBlinkCtrl.mode = SLOW_BLINK;
+          else
+            LightBlinkCtrl.mode = ALL_OFF;
+
+          system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+        }
+        else if(state->sensorstate.MEMSSensor == 1)
+        {
+          state->sensorstate.MEMSSensor = 0;
+          switch(state->memsstate)
+          {
+          case STOP:
+            if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != ALL_ON))
+            {
+              LightBlinkCtrl.mode = MEDIUM_BLINK;
+              system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+              system_start_timer(USERAPP_LIGHT_BLINK_OFF_EVT,TIMER_ONCE_MODE,LIGHT_BLINK_OFF_TIME);
             }
             break;
 

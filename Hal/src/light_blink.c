@@ -58,6 +58,7 @@ void LightBlinkMode(LightBlinkCtrl_t *lightctrl)
     LightTurnRight(lightctrl);
     break;
   case FAST_BLINK:
+  case MEDIUM_BLINK:
   case SLOW_BLINK:
     LightBlink(lightctrl);
     break;
@@ -230,6 +231,11 @@ void LightBlink(LightBlinkCtrl_t *lightctrl)
   case FAST_BLINK:
     system_start_timer(USERAPP_LIGHT_BLINK_EVT,TIMER_ONCE_MODE,LIGHT_FAST_BLINK_TIME);
     break;
+
+  case MEDIUM_BLINK:
+    system_start_timer(USERAPP_LIGHT_BLINK_EVT,TIMER_ONCE_MODE,LIGHT_MEDIUM_BLINK_TIME);
+    break;
+
   case SLOW_BLINK:
     system_start_timer(USERAPP_LIGHT_BLINK_EVT,TIMER_ONCE_MODE,LIGHT_SLOW_BLINK_TIME);
     break;

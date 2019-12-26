@@ -31,6 +31,7 @@ uint8_t HalKeyCurrentKeys = HAL_KEY_SW_N;
 UserKeyDetect_t UserAppKey[HAL_APP_KEY_NUM] =
 {
   {
+    .keyLink.keyValue = HAL_KEY_SW_N,
     .ClickActive = RESET,
     .timestamp   = 0,
     .ClickValue  = HAL_KEY_CLICKED_VALUE,
@@ -46,18 +47,36 @@ UserKeyDetect_t UserAppKey[HAL_APP_KEY_NUM] =
 *
 * @return
 */
-void HalKeyInit(KeyDeviceControl_t *keydevice, halKeyCBack_t cback)
+void HalKeyInit(KeyDeviceControl_t *keydevice)
 {
   /*key Init*/
   GPIO_Init(keydevice->hardLink.port, keydevice->hardLink.pin, keydevice->hardLink.mode);
 
   EXTI_SetExtIntSensitivity(keydevice->exitLink.exit_port, keydevice->exitLink.exit_Trigger);
 
+
+  for(uint8_t i = 0; i < HAL_APP_KEY_NUM; i++)
+  {
+    if(UserAppKey[i].keyLink.keyValue == HAL_KEY_SW_N)
+    {
+      UserAppKey[i].keyLink = *keydevice;
+    }
+  }
+}
+
+/*******************************************************************************
+* @fn     HalKeyCallbackRegister
+*
+* @brief  Hal Key Callback Register
+*
+* @param
+*
+* @return
+*/
+void HalKeyCallbackRegister(halKeyCBack_t cback)
+{
   /* Register the callback fucntion */
   pHalKeyProcessFunction = cback;
-
-  /*按键对应关系*/
-  UserAppKey[0].keyLink  = OnOffKey;/*系统开关机按键*/
 }
 
 /*******************************************************************************
@@ -107,9 +126,8 @@ BitStatus HalKeyRead(KeyDeviceControl_t *keydevice)
 void HalKeyPoll(void)
 {
   uint8_t keys = 0;
-  uint32_t currtime = 0;
-  uint32_t holdtime = 0;
   UserKeyState_t state = NONE_CLICK;
+  uint8_t clicktimes = 0;
 
   for(uint8_t i = 0; i < HAL_APP_KEY_NUM; i++)
   {
@@ -125,7 +143,10 @@ void HalKeyPoll(void)
           /*get currrent time,returns milliseconds,since last reboot*/
           UserAppKey[i].timestamp = GetSystemClock();
           UserAppKey[i].ClickActive = SET;
+          UserAppKey[i].clicktimes++;
+
           /*按键长按检查*/
+          system_stop_timer(USERAPP_KEY_CLICK_EVENT);
           system_start_timer (USERAPP_KEY_CLICK_EVENT, TIMER_ONCE_MODE, HAL_KEY_CLICKED_VALUE);
         }
       }
@@ -135,34 +156,7 @@ void HalKeyPoll(void)
         if(UserAppKey[i].ClickActive)
         {
           HalKeyCurrentKeys &= ~UserAppKey[i].keyLink.keyValue;
-          system_stop_timer(USERAPP_KEY_CLICK_EVENT);
           system_stop_timer(USERAPP_KEY_HOLD_EVENT);
-
-          currtime = GetSystemClock();
-
-          /*计算按键按下的时间，需要考虑溢出问题*/
-          if(currtime > UserAppKey[i].timestamp)
-          {
-            holdtime =  currtime - UserAppKey[i].timestamp;
-          }
-          else
-          {
-            /*static uint32 osal_systemClock;*/
-            holdtime = 0xffffffff - UserAppKey[i].timestamp + currtime;
-          }
-
-          /*According to press Time，judge state*/
-          if(holdtime > HAL_KEY_CLICKED_VALUE)
-          {
-            keys = UserAppKey[i].keyLink.keyValue;
-            state = HOLD_RELEASE;
-          }
-          else
-          {
-            keys = UserAppKey[i].keyLink.keyValue;
-            state = CLICK;
-          }
-
           UserAppKey[i].ClickActive = RESET;
           UserAppKey[i].timestamp = 0;
         }
@@ -182,7 +176,7 @@ void HalKeyPoll(void)
   /* Invoke Callback if new keys were depressed */
   if (keys && (pHalKeyProcessFunction))
   {
-    (pHalKeyProcessFunction) (keys,state);
+    (pHalKeyProcessFunction) (keys,state,clicktimes);
   }
 }
 
@@ -199,6 +193,7 @@ void HalKeyClickCheck(void)
 {
   uint8_t keys = 0x00;
   UserKeyState_t state = NONE_CLICK ;
+  uint8_t clicktimes = 0;
 
   /*check Key state press or release*/
   for(uint8_t i = 0; i < HAL_APP_KEY_NUM; i++)
@@ -210,13 +205,17 @@ void HalKeyClickCheck(void)
       {
         keys = UserAppKey[i].keyLink.keyValue;
         state = START_HOLD;
+        UserAppKey[i].clicktimes = 0;
         /*按键长按检查*/
         system_start_timer (USERAPP_KEY_HOLD_EVENT, TIMER_ONCE_MODE, HAL_KEY_HOLD_VALUE);
       }
       else
       {
         /*release*/
-
+        keys = UserAppKey[i].keyLink.keyValue;
+        state = CLICK;
+        clicktimes = UserAppKey[i].clicktimes;
+        UserAppKey[i].clicktimes = 0;
       }
     }
   }
@@ -224,7 +223,7 @@ void HalKeyClickCheck(void)
   /* Invoke Callback if new keys were depressed */
   if(keys && pHalKeyProcessFunction)
   {
-    (pHalKeyProcessFunction) (keys,state);
+    (pHalKeyProcessFunction) (keys,state,clicktimes);
   }
 }
 
@@ -241,6 +240,7 @@ void HalKeyLongHoldCheck(void)
 {
   uint8_t keys = 0x00;
   UserKeyState_t state = NONE_CLICK ;
+  uint8_t clicktimes = 0;
 
   /*check Key state press or release*/
   for(uint8_t i = 0; i < HAL_APP_KEY_NUM; i++)
@@ -264,6 +264,6 @@ void HalKeyLongHoldCheck(void)
   /* Invoke Callback if new keys were depressed */
   if(keys && pHalKeyProcessFunction)
   {
-    (pHalKeyProcessFunction) (keys,state);
+    (pHalKeyProcessFunction) (keys,state,clicktimes);
   }
 }

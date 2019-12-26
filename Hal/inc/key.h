@@ -15,7 +15,7 @@
 /*****************************************************************************/
 #define HAL_APP_KEY_NUM                       1
 #define HAL_KEY_DEBOUNCE_VALUE                30u     //30ms
-#define HAL_KEY_CLICKED_VALUE                 1500u   //1000ms
+#define HAL_KEY_CLICKED_VALUE                 1000u   //1000ms
 #define HAL_KEY_HOLD_VALUE                    2000u   //2.0s
 
 /* Buttons */
@@ -50,6 +50,7 @@ typedef struct
 {
   KeyDeviceControl_t keyLink;//按键物理连接
   FlagStatus ClickActive;    //按键按下有效
+  uint8_t clicktimes;        //连续单击次数
   uint32_t timestamp;        //初始按下时间
   uint16_t ClickValue;       //短按时间阀值
   uint16_t HoldValue;        //长按时间阀值
@@ -60,9 +61,10 @@ typedef struct
 extern UserKeyDetect_t UserAppKey[HAL_APP_KEY_NUM] ;
 extern KeyDeviceControl_t  OnOffKey;
 /******************************************************************************/
-typedef void (*halKeyCBack_t) (uint8_t keys,UserKeyState_t state);
+typedef void (*halKeyCBack_t) (uint8_t keys,UserKeyState_t state,uint8_t clicktimes);
 
-void HalKeyInit(KeyDeviceControl_t *keydevice, halKeyCBack_t cback);
+void HalKeyInit(KeyDeviceControl_t *keydevice);
+void HalKeyCallbackRegister(halKeyCBack_t cback);
 void HAL_KEY_Callback(KeyDeviceControl_t *keydevice);
 void HalKeyPoll(void);
 BitStatus HalKeyRead(KeyDeviceControl_t *keydevice);

@@ -19,12 +19,13 @@
 
 typedef enum
 {
-  ALL_OFF     = (uint8_t)0x00,
-  ALL_ON      = (uint8_t)0x01,
-  TURN_LEFT   = (uint8_t)0x02,
-  TURN_RIGHT  = (uint8_t)0x03,
-  FAST_BLINK  = (uint8_t)0x04,
-  SLOW_BLINK  = (uint8_t)0x05
+  ALL_OFF       = (uint8_t)0x00,
+  ALL_ON        = (uint8_t)0x01,
+  TURN_LEFT     = (uint8_t)0x02,
+  TURN_RIGHT    = (uint8_t)0x03,
+  FAST_BLINK    = (uint8_t)0x04,
+  MEDIUM_BLINK  = (uint8_t)0x05,
+  SLOW_BLINK    = (uint8_t)0x06
 }enLightBlinkMode;
 
 typedef enum

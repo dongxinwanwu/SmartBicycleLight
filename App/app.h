@@ -39,6 +39,12 @@ typedef struct
 
 typedef enum
 {
+  STOP_BLINK_OFF   = (uint8_t)0x00,
+  STOP_BLINK_ON    = (uint8_t)0x01,
+}enStopBlinkState;
+
+typedef enum
+{
   WIRE_TURN_NONE   = (uint8_t)0x00,
   WIRE_TURN_LEFT   = (uint8_t)0x01,
   WIRE_TURN_RIGHT  = (uint8_t)0x02,
@@ -56,6 +62,7 @@ typedef enum
 
 typedef struct
 {
+  uint8_t stopBlink   :1;
   uint8_t turn        :1;
   uint8_t MEMSSensor  :1;
   uint8_t PhotoSensor :1;
@@ -63,10 +70,11 @@ typedef struct
 
 typedef struct
 {
-  SensorState_t   sensorstate;
-  enWireTurnState turnstate;
-  enMEMSState     memsstate;
-  enPhotoState    photostate;
+  SensorState_t     sensorstate;
+  enStopBlinkState  stopblinkstate;
+  enWireTurnState   turnstate;
+  enMEMSState       memsstate;
+  enPhotoState      photostate;
 }BicycleState_t;
 
 /*设备工作模式*/
@@ -83,5 +91,5 @@ typedef struct
 /*****************************************************************************/
 extern void System_eventloop_hook(void);
 extern uint16_t ProcessSystemTimeEvent(uint16_t event_id);
-extern void UserAppHandleKeys(uint8_t keys,UserKeyState_t state);
+extern void UserAppHandleKeys(uint8_t keys,UserKeyState_t state,uint8_t clicktimes);
 #endif

@@ -100,7 +100,8 @@ void SysBspInit(void)
   ADC_Init(&PhotoDev);
 
   /*key*/
-  HalKeyInit(&OnOffKey,UserAppHandleKeys);
+  HalKeyInit(&OnOffKey);
+  HalKeyCallbackRegister(UserAppHandleKeys);
 
   /*spi*/
   Hard_SPI_Init();
