@@ -10459,6 +10459,12 @@
         <file>
             <name>$PROJ_DIR$\..\App\define.h</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\App\state_queue.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\App\state_queue.h</name>
+        </file>
     </group>
     <group>
         <name>Hal</name>

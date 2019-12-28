@@ -16,12 +16,6 @@
 /*! \brief Photo State
  *
  */
-typedef enum
-{
-	DAY    = (uint8_t)0x00,
-	NIGHT  = (uint8_t)0x01
-}enPhotoState;
-
 typedef void (*Photo_Init)(HardLink_t *hardlink);
 typedef void (*Photo_Open)(void);
 typedef void (*Photo_Close)(void);
