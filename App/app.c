@@ -52,6 +52,8 @@ AxesRaw_t LIS3DH_SensorData = {0};
 MEMSQueue_t  BicycleMemsDataQueue;/*传感器采集数据*/
 Accelerate_t BicycleAccelerate = {0};/*最终处理数据*/
 StateQueue_t BicycleStateQueue;/*传感器采集数据*/
+
+bool MemsSensorInitState = FALSE;
 /*******************************************************************************
 * @fn     System_eventloop_hook(void)
 *
@@ -130,7 +132,7 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
 
     if(lisid == LIS3DH_DEFAULT_ID_REG)
     {
-      system_start_timer(USERAPP_SENSOR_CHECK_EVT,TIMER_ONCE_MODE,SENSOR_CHECK_LOOP_TIME);
+      MemsSensorInitState = TRUE;
     }
     return events ^ USERAPP_LIS3DH_INIT_EVT;
   }
@@ -307,8 +309,11 @@ void UserProcessNormalMode(void)
   system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
   system_start_timer(USERAPP_LIGHT_OFF_EVT,TIMER_ONCE_MODE,1000);
 
-  /*开启检测*/
-  system_start_timer(USERAPP_SENSOR_CHECK_EVT,TIMER_ONCE_MODE,2000);
+  if(MemsSensorInitState == TRUE)
+  {
+    /*开启检测*/
+    system_start_timer(USERAPP_SENSOR_CHECK_EVT,TIMER_ONCE_MODE,2000);
+  }
 }
 
 /*******************************************************************************
@@ -381,7 +386,7 @@ void UserProcessMemsData(void)
       MemsQueue_pop(&BicycleMemsDataQueue,&acc_z_old);
     }
 
-    if(BicycleAccelerate.acc_z >= 20)
+    if(BicycleAccelerate.acc_z >= 2000)
     {
       BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
       BicycleState.bicyclesensor.memsstate = SPEED_UP;
