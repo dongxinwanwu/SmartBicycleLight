@@ -27,13 +27,18 @@ void UserProcessWirelessData(void);
 void UserProcessPhotoData(void);
 void UserProcessMemsData(void);
 void UserProcessBicycleData(void);
+void UserProcessBicycleDayRunState(void);
+void UserProcessBicycleNightRunState(void);
+void UserProcessBicycleStopState(void);
+void UserProcessBicycleSuspendState(void);
+void UserProcessBicycleWaittingState(void);
 /* Private variables ---------------------------------------------------------*/
 BicycleState_t BicycleState =
 {
   .bicyclesensor.sensorstate  = 0,
-  .bicyclesensor.stopblinkstate = STOP_BLINK_OFF,
+  .bicyclesensor.urgentblinkstate = URGENT_BLINK_OFF,
   .bicyclesensor.turnstate    = WIRE_TURN_NONE,
-  .bicyclesensor.memsstate    = STOP,
+  .bicyclesensor.memsstate    = SPEED_STOP,
   .bicyclesensor.photostate   = DAY,
   .bicyclestate               = BICYCLE_STOP
 };
@@ -138,7 +143,7 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
     UserProcessMemsData();
 
     /*自行车状态*/
-
+    UserProcessBicycleData();
     /*转向灯控制*/
     UserBicycleLightControl(&BicycleState);
 
@@ -153,6 +158,21 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
   }
 
   if(events & USERAPP_LIGHT_BLINK_OFF_EVT)
+  {
+    if(BicycleState.bicyclestate == BICYCLE_SUSPEND)
+    {
+      LightBlinkCtrl.waitstate = FINSHED;
+    }
+    else
+    {
+      BicycleState.bicyclestate = BICYCLE_DEFAULT;
+      LightBlinkCtrl.mode = ALL_OFF;
+      LightBlinkMode(&LightBlinkCtrl);
+    }
+    return events ^ USERAPP_LIGHT_BLINK_OFF_EVT;
+  }
+
+  if(events & USERAPP_LIGHT_OFF_EVT)
   {
     LightBlinkCtrl.mode = ALL_OFF;
     LightBlinkMode(&LightBlinkCtrl);
@@ -173,23 +193,28 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
 */
 void UserAppHandleKeys(uint8_t keys,UserKeyState_t state,uint8_t clicktimes)
 {
-  if(keys & OnOffKey.keyValue)
+  if(keys & SysKey.keyValue)
   {
     if(state == CLICK)
     {
-      /*按键单击，切换工作模式*/
-      if(clicktimes == 2)
+      if(clicktimes == 1)
       {
-        /**/
-        if(BicycleState.bicyclesensor.stopblinkstate == STOP_BLINK_ON)
+        /*关闭紧急模式*/
+        if(BicycleState.bicyclesensor.urgentblinkstate == URGENT_BLINK_ON)
         {
-          BicycleState.bicyclesensor.stopblinkstate = STOP_BLINK_OFF;
+          BicycleState.bicyclesensor.urgentblinkstate = URGENT_BLINK_OFF;
         }
-        else
+        BicycleState.bicyclesensor.sensorstate.urgentBlink = 1;
+        UserBicycleLightControl(&BicycleState);
+      }
+      else if(clicktimes == 2)
+      {
+        /*开启紧急模式*/
+        if(BicycleState.bicyclesensor.urgentblinkstate == URGENT_BLINK_OFF)
         {
-          BicycleState.bicyclesensor.stopblinkstate = STOP_BLINK_ON;
+          BicycleState.bicyclesensor.urgentblinkstate = URGENT_BLINK_ON;
         }
-        BicycleState.bicyclesensor.sensorstate.stopBlink = 1;
+        BicycleState.bicyclesensor.sensorstate.urgentBlink = 1;
         UserBicycleLightControl(&BicycleState);
       }
     }
@@ -250,13 +275,20 @@ void UserProcessHaltMode(void)
 {
   /*关闭检测*/
   system_stop_timer(USERAPP_SENSOR_CHECK_EVT);
-
   /*关闭指示灯*/
-#if (defined DEBUG)
-  LedControl(&OnOffLed.hardLink,OFF);
-#endif
   LightBlinkCtrl.mode = ALL_OFF;
   system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+
+  /*状态恢复初始化*/
+  BicycleState.bicyclesensor.sensorstate.urgentBlink  = 0;
+  BicycleState.bicyclesensor.sensorstate.MEMSSensor   = 0;
+  BicycleState.bicyclesensor.sensorstate.PhotoSensor  = 0;
+  BicycleState.bicyclesensor.sensorstate.turn         = 0;
+  BicycleState.bicyclesensor.urgentblinkstate         = URGENT_BLINK_OFF;
+  BicycleState.bicyclesensor.turnstate                = WIRE_TURN_NONE;
+  BicycleState.bicyclesensor.memsstate                = SPEED_STOP;
+  BicycleState.bicyclesensor.photostate               = DAY;
+  BicycleState.bicyclestate                           = BICYCLE_STOP;
 }
 
 /*******************************************************************************
@@ -270,11 +302,13 @@ void UserProcessHaltMode(void)
 */
 void UserProcessNormalMode(void)
 {
-#if (defined DEBUG)
-  LedControl(&OnOffLed.hardLink,ON);
-#endif
+  /*开机指示*/
+  LightBlinkCtrl.mode = ALL_ON;
+  system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+  system_start_timer(USERAPP_LIGHT_OFF_EVT,TIMER_ONCE_MODE,1000);
+
   /*开启检测*/
-  system_start_timer(USERAPP_SENSOR_CHECK_EVT,TIMER_ONCE_MODE,SENSOR_CHECK_LOOP_TIME);
+  system_start_timer(USERAPP_SENSOR_CHECK_EVT,TIMER_ONCE_MODE,2000);
 }
 
 /*******************************************************************************
@@ -350,12 +384,17 @@ void UserProcessMemsData(void)
     if(BicycleAccelerate.acc_z >= 20)
     {
       BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
-      BicycleState.bicyclesensor.memsstate = RUN;
+      BicycleState.bicyclesensor.memsstate = SPEED_UP;
+    }
+    else if(BicycleAccelerate.acc_z >= 0)
+    {
+      BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
+      BicycleState.bicyclesensor.memsstate = SPEED_UNIFORM;
     }
     else
     {
       BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
-      BicycleState.bicyclesensor.memsstate = STOP;
+      BicycleState.bicyclesensor.memsstate = SPEED_DOWM;
     }
   }
 }
@@ -372,7 +411,7 @@ void UserProcessMemsData(void)
 void UserProcessBicycleData(void)
 {
   /*数据处理方案：循环队列，一直进;满队列后，开始出*/
-  StateDataType memsState = STOP;
+  StateDataType memsState = SPEED_STOP;
   uint8_t runNum = 0;
   uint8_t stopNum = 0;
 
@@ -385,21 +424,30 @@ void UserProcessBicycleData(void)
       /*根据队列中传感器状态，得出自行车状态*/
       for(uint8_t i = 0; i < STATE_QUEUE_NUM; i++)
       {
-        if(BicycleStateQueue.data[i] == RUN)
-        {
+        if((BicycleStateQueue.data[i] == SPEED_UP) ||
+           (BicycleStateQueue.data[i] == SPEED_UNIFORM))
           runNum++;
+        else
+          stopNum++;
+      }
+      /*队列长度：12*/
+      if(stopNum >= 10)
+      {
+        /*刹车等待状态*/
+        if(BicycleState.bicyclestate == BICYCLE_SUSPEND)
+        {
+          BicycleState.bicyclestate = BICYCLE_WAITTING;
+        }
+        else if(BicycleState.bicyclestate == BICYCLE_WAITTING)
+        {
+
         }
         else
         {
-          stopNum++;
+          BicycleState.bicyclestate = BICYCLE_STOP;
         }
       }
-
-      if(runNum == 0)
-      {
-        BicycleState.bicyclestate = BICYCLE_STOP;
-      }
-      else if(stopNum == 0)
+      else if(runNum >= 10)
       {
         BicycleState.bicyclestate = BICYCLE_RUN;
       }
@@ -445,6 +493,7 @@ void PhotoState_Process(enPhotoState state)
     break;
   }
 }
+
 /*******************************************************************************
 * @fn     UserBicycleLightControl
 *
@@ -456,6 +505,11 @@ void PhotoState_Process(enPhotoState state)
 */
 void UserBicycleLightControl(BicycleState_t *state)
 {
+  /*指示灯控制：
+  （1）无线转向灯
+  （2）光照
+  （3）紧急
+  （4）运动传感器*/
   if(state->bicyclesensor.sensorstate.turn == 1)
   {
     state->bicyclesensor.sensorstate.turn = 0;
@@ -488,23 +542,29 @@ void UserBicycleLightControl(BicycleState_t *state)
     {
     case DAY:
       {
-        if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != ALL_OFF))
-        {
-          LightBlinkCtrl.mode = ALL_OFF;
-          system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
-        }
         /*白天停车闪灯*/
         if(state->bicyclesensor.sensorstate.MEMSSensor == 1)
         {
           state->bicyclesensor.sensorstate.MEMSSensor = 0;
-          if(state->bicyclestate == BICYCLE_SUSPEND)
+          switch(state->bicyclestate)
           {
-            if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != MEDIUM_BLINK))
-            {
-              LightBlinkCtrl.mode = MEDIUM_BLINK;
-              system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
-              system_start_timer(USERAPP_LIGHT_BLINK_OFF_EVT,TIMER_ONCE_MODE,LIGHT_BLINK_OFF_TIME);
-            }
+          case BICYCLE_STOP:
+            UserProcessBicycleStopState();
+            break;
+
+          case BICYCLE_RUN:
+            UserProcessBicycleDayRunState();
+            break;
+
+          case BICYCLE_SUSPEND:
+            UserProcessBicycleSuspendState();
+            break;
+
+          case BICYCLE_WAITTING:
+            UserProcessBicycleWaittingState();
+            break;
+          default:
+            break;
           }
         }
       }
@@ -512,16 +572,22 @@ void UserBicycleLightControl(BicycleState_t *state)
 
     case NIGHT:
       {
-        if(state->bicyclesensor.sensorstate.stopBlink == 1)
+        if(state->bicyclesensor.sensorstate.urgentBlink == 1)
         {
-          state->bicyclesensor.sensorstate.stopBlink = 0;
-
-          if(state->bicyclesensor.stopblinkstate == STOP_BLINK_ON)
-            LightBlinkCtrl.mode = SLOW_BLINK;
+          if(state->bicyclesensor.urgentblinkstate == URGENT_BLINK_ON)
+          {
+            if(LightBlinkCtrl.mode != FAST_BLINK)
+            {
+              LightBlinkCtrl.mode = FAST_BLINK;
+              system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+            }
+          }
           else
+          {
+            state->bicyclesensor.sensorstate.urgentBlink = 0;
             LightBlinkCtrl.mode = ALL_OFF;
-
-          system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+            system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+          }
         }
         else if(state->bicyclesensor.sensorstate.MEMSSensor == 1)
         {
@@ -530,34 +596,21 @@ void UserBicycleLightControl(BicycleState_t *state)
           switch(state->bicyclestate)
           {
           case BICYCLE_STOP:
-            {
-              if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != SLOW_BLINK))
-              {
-                LightBlinkCtrl.mode = MEDIUM_BLINK;
-                system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
-                system_start_timer(USERAPP_LIGHT_BLINK_OFF_EVT,TIMER_ONCE_MODE,LIGHT_BLINK_OFF_TIME);
-              }
-            }
+            UserProcessBicycleStopState();
             break;
+
           case BICYCLE_RUN:
-            {
-              if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != FAST_BLINK))
-              {
-                LightBlinkCtrl.mode = FAST_BLINK;
-                system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
-              }
-            }
+            UserProcessBicycleNightRunState();
             break;
+
           case BICYCLE_SUSPEND:
-            {
-              if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != MEDIUM_BLINK))
-              {
-                LightBlinkCtrl.mode = MEDIUM_BLINK;
-                system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
-                system_start_timer(USERAPP_LIGHT_BLINK_OFF_EVT,TIMER_ONCE_MODE,LIGHT_BLINK_OFF_TIME);
-              }
-            }
+            UserProcessBicycleSuspendState();
             break;
+
+          case BICYCLE_WAITTING:
+            UserProcessBicycleWaittingState();
+            break;
+
           default:
             break;
           }
@@ -580,6 +633,100 @@ void UserBicycleLightControl(BicycleState_t *state)
   }
 }
 
+/*******************************************************************************
+* @fn     UserProcessBicycleDayRunState
+*
+* @brief  UserProcessBicycleDayRunState
+*
+* @param
+*
+* @return
+*/
+void UserProcessBicycleDayRunState(void)
+{
+  if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != ALL_OFF))
+  {
+    LightBlinkCtrl.mode = ALL_OFF;
+    system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+  }
+}
+
+/*******************************************************************************
+* @fn     UserProcessBicycleNightRunState
+*
+* @brief  UserProcessBicycleNightRunState
+*
+* @param
+*
+* @return
+*/
+void UserProcessBicycleNightRunState(void)
+{
+  if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != MEDIUM_BLINK))
+  {
+    LightBlinkCtrl.mode = MEDIUM_BLINK;
+    system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+  }
+}
+
+/*******************************************************************************
+* @fn     UserProcessBicycleStopState
+*
+* @brief  UserProcessBicycleStopState
+*
+* @param
+*
+* @return
+*/
+void UserProcessBicycleStopState(void)
+{
+  if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.waitstate == FINSHED) && (LightBlinkCtrl.mode != ALL_OFF))
+  {
+    LightBlinkCtrl.mode = ALL_OFF;
+    system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+  }
+}
+
+/*******************************************************************************
+* @fn     UserProcessBicycleSuspendState
+*
+* @brief  UserProcessBicycleSuspendState
+*
+* @param
+*
+* @return
+*/
+void UserProcessBicycleSuspendState(void)
+{
+  if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.mode != ALL_ON))
+  {
+    LightBlinkCtrl.mode = ALL_ON;
+    system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+    system_start_timer(USERAPP_LIGHT_BLINK_OFF_EVT,TIMER_ONCE_MODE,2000);
+  }
+}
+
+/*******************************************************************************
+* @fn     UserProcessBicycleWaittingState
+*
+* @brief  UserProcessBicycleWaittingState
+*
+* @param
+*
+* @return
+*/
+void UserProcessBicycleWaittingState(void)
+{
+  if((LightBlinkCtrl.turnstate == FINSHED) && (LightBlinkCtrl.waitstate == FINSHED) && (LightBlinkCtrl.mode != WAITTING_BLINK))
+  {
+    LightBlinkCtrl.mode = WAITTING_BLINK;
+    LightBlinkCtrl.waitstate = NFINSHED;
+    LightBlinkCtrl.lightRightIdx = RIGHT_LIGHT_START_IDX;
+    LightBlinkCtrl.lightLeftIdx = LEFT_LIGHT_START_IDX;
+    system_set_timer_event(USERAPP_LIGHT_BLINK_EVT);
+    system_start_timer(USERAPP_LIGHT_BLINK_OFF_EVT,TIMER_ONCE_MODE,LIGHT_BLINK_OFF_TIME);
+  }
+}
 /**
   * @}
   */

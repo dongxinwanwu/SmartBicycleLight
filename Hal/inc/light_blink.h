@@ -19,13 +19,14 @@
 
 typedef enum
 {
-  ALL_OFF       = (uint8_t)0x00,
-  ALL_ON        = (uint8_t)0x01,
-  TURN_LEFT     = (uint8_t)0x02,
-  TURN_RIGHT    = (uint8_t)0x03,
-  FAST_BLINK    = (uint8_t)0x04,
-  MEDIUM_BLINK  = (uint8_t)0x05,
-  SLOW_BLINK    = (uint8_t)0x06
+  ALL_OFF         = (uint8_t)0x00,
+  ALL_ON          = (uint8_t)0x01,
+  TURN_LEFT       = (uint8_t)0x02,
+  TURN_RIGHT      = (uint8_t)0x03,
+  FAST_BLINK      = (uint8_t)0x04,
+  MEDIUM_BLINK    = (uint8_t)0x05,
+  SLOW_BLINK      = (uint8_t)0x06,
+  WAITTING_BLINK  = (uint8_t)0x07
 }enLightBlinkMode;
 
 typedef enum
@@ -38,15 +39,18 @@ typedef enum
 {
   NFINSHED = (uint8_t)0x00,
   FINSHED  = (uint8_t)0x01
-}enLightTurnState;
+}enLightFlashState;
 
 typedef struct
 {
   enLightState state[LIGHT_NUM];/*LED1~LED10*/
   enLightState blinkstate;
   enLightBlinkMode mode;
-  enLightTurnState turnstate;
-  int8_t lightIdx;
+  enLightFlashState turnstate;
+  enLightFlashState waitstate;
+  int8_t lightTurnIdx;/*×ªÏò*/
+  int8_t lightRightIdx;
+  int8_t lightLeftIdx;
   int8_t loopNum;
 }LightBlinkCtrl_t;
 /******************************************************************************/

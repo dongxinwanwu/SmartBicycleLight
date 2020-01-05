@@ -14,11 +14,10 @@
 #include "define.h"
 /* Private typedef -----------------------------------------------------------*/
 /*****************************************************************************/
-#if (defined DEBUG)
-#define LIGHT_NUM         9
-#else
-#define LIGHT_NUM         10
-#endif
+#define LIGHT_NUM               10
+#define RIGHT_LIGHT_START_IDX   4
+#define LEFT_LIGHT_START_IDX    5
+
 
 /*****************************************************************************/
 typedef enLedState (*DeviceControl)(HardLink_t *hardlink, enLedState state);
@@ -39,7 +38,6 @@ typedef struct
 /* Evalboard I/Os configuration */
 
 /*led*/
-extern LedDeviceControl_t OnOffLed;
 extern LedDeviceControl_t DirLedTab[LIGHT_NUM];
 /* Private function prototypes -----------------------------------------------*/
 

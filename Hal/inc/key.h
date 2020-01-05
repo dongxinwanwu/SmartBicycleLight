@@ -59,7 +59,7 @@ typedef struct
 
 /******************************************************************************/
 extern UserKeyDetect_t UserAppKey[HAL_APP_KEY_NUM] ;
-extern KeyDeviceControl_t  OnOffKey;
+extern KeyDeviceControl_t  SysKey;
 /******************************************************************************/
 typedef void (*halKeyCBack_t) (uint8_t keys,UserKeyState_t state,uint8_t clicktimes);
 

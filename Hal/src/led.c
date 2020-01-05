@@ -17,21 +17,9 @@
 /* Private macro -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
-#if (defined DEBUG)
-LedDeviceControl_t OnOffLed =
-{
-  .hardLink.port  = GPIOA,
-  .hardLink.pin   = GPIO_PIN_2,
-  .hardLink.mode  = GPIO_MODE_OUT_PP_HIGH_FAST,
-  .Ctrl           = LedControl,
-  .state          = OFF
-};
-#endif
-
 /*转向指示灯*/
 LedDeviceControl_t DirLedTab[LIGHT_NUM] =
 {
-#if (!defined DEBUG)
   {
     .hardLink.port  = GPIOA,
     .hardLink.pin   = GPIO_PIN_2,
@@ -40,7 +28,6 @@ LedDeviceControl_t DirLedTab[LIGHT_NUM] =
     .state          = OFF
 
   },
-#endif
   {
     .hardLink.port  = GPIOA,
     .hardLink.pin   = GPIO_PIN_1,

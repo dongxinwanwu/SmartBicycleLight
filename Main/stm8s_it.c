@@ -135,10 +135,10 @@ INTERRUPT_HANDLER(EXTI_PORTB_IRQHandler, 4)
   UserTimingDelay(1600);
 
   /* key interrupt*/
-  if((GPIO_ReadInputPin(OnOffKey.hardLink.port, OnOffKey.hardLink.pin) == RESET) ||
-     (GPIO_ReadInputPin(OnOffKey.hardLink.port, OnOffKey.hardLink.pin) == SET))
+  if((GPIO_ReadInputPin(SysKey.hardLink.port, SysKey.hardLink.pin) == RESET) ||
+     (GPIO_ReadInputPin(SysKey.hardLink.port, SysKey.hardLink.pin) == SET))
   {
-    HAL_KEY_Callback(&OnOffKey);
+    HAL_KEY_Callback(&SysKey);
   }
 }
 

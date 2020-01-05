@@ -31,6 +31,9 @@ typedef enum
   br115200  = (uint8_t)0x07
 }enBaudRate;
 /******************************************************************************/
+#if (defined DEBUG)
 extern void DebugUart_Config(enBaudRate baudrate);
 extern void DebugPrintf(uint8_t *buff,uint8_t len);
+#endif
+
 #endif

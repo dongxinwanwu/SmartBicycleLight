@@ -85,11 +85,6 @@ void SysBspInit(void)
   SysPeriphDeInit();
 
   /*led*/
-#if (defined DEBUG)
-  Led_Init(&OnOffLed);
-  LedControl(&OnOffLed.hardLink,ON);
-#endif
-
   for(uint8_t i = 0; i < LIGHT_NUM; i++)
   {
     Led_Init(&DirLedTab[i]);
@@ -100,7 +95,7 @@ void SysBspInit(void)
   ADC_Init(&PhotoDev);
 
   /*key*/
-  HalKeyInit(&OnOffKey);
+  HalKeyInit(&SysKey);
   HalKeyCallbackRegister(UserAppHandleKeys);
 
   /*spi*/

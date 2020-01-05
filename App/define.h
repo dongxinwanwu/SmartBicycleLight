@@ -26,10 +26,6 @@
 #endif
 /* Private typedef -----------------------------------------------------------*/
 /*****************************************************************************/
-#ifndef DEBUG
-#define DEBUG
-#endif
-
 /*指示灯状态枚举*/
 typedef enum
 {
@@ -72,9 +68,9 @@ typedef enum
 
 typedef enum
 {
-  STOP_BLINK_OFF   = (uint8_t)0x00,
-  STOP_BLINK_ON    = (uint8_t)0x01,
-}enStopBlinkState;
+  URGENT_BLINK_OFF   = (uint8_t)0x00,
+  URGENT_BLINK_ON    = (uint8_t)0x01,
+}enUrgentBlinkState;
 
 typedef enum
 {
@@ -85,24 +81,24 @@ typedef enum
 
 typedef enum
 {
-  STOP          = (uint8_t)0x00,
-  RUN           = (uint8_t)0x01,
+  SPEED_STOP    = (uint8_t)0x00,
+  SPEED_UNIFORM = (uint8_t)0x01,
   SPEED_UP      = (uint8_t)0x02,
-  SPEED_DOWM    = (uint8_t)0x03,
-  UP_HILL       = (uint8_t)0x04,
-  DOWN_HILL     = (uint8_t)0x05
+  SPEED_DOWM    = (uint8_t)0x03
 }enMEMSState;
 
 typedef enum
 {
-  BICYCLE_STOP      = (uint8_t)0x00,
-  BICYCLE_RUN       = (uint8_t)0x01,
-  BICYCLE_SUSPEND   = (uint8_t)0x02/*暂停*/
+  BICYCLE_DEFAULT   = (uint8_t)0x00,
+  BICYCLE_STOP      = (uint8_t)0x01,
+  BICYCLE_RUN       = (uint8_t)0x02,
+  BICYCLE_SUSPEND   = (uint8_t)0x03,/*刹车*/
+  BICYCLE_WAITTING  = (uint8_t)0x04 /*等待红绿灯*/
 }enBicycleState;
 
 typedef struct
 {
-  uint8_t stopBlink   :1;
+  uint8_t urgentBlink   :1;
   uint8_t turn        :1;
   uint8_t MEMSSensor  :1;
   uint8_t PhotoSensor :1;
@@ -110,11 +106,11 @@ typedef struct
 
 typedef struct
 {
-  SensorState_t     sensorstate;
-  enStopBlinkState  stopblinkstate;
-  enWireTurnState   turnstate;
-  enMEMSState       memsstate;
-  enPhotoState      photostate;
+  SensorState_t       sensorstate;
+  enUrgentBlinkState  urgentblinkstate;
+  enWireTurnState     turnstate;
+  enMEMSState         memsstate;
+  enPhotoState        photostate;
 }BicycleSensorState_t;
 
 /*设备工作模式*/

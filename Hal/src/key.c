@@ -14,7 +14,7 @@ BitStatus HalKeyRead(KeyDeviceControl_t *keydevice);
 void HalKeyPoll (void);
 /******************************************************************************/
 /*系统开关机按键*/
-KeyDeviceControl_t  OnOffKey =
+KeyDeviceControl_t  SysKey =
 {
   .hardLink.port                = GPIOB,
   .hardLink.pin                 = GPIO_PIN_3,
@@ -198,7 +198,7 @@ void HalKeyClickCheck(void)
   /*check Key state press or release*/
   for(uint8_t i = 0; i < HAL_APP_KEY_NUM; i++)
   {
-    if(UserAppKey[i].ClickActive)
+    //if(UserAppKey[i].ClickActive)
     {
       /*press*/
       if(HalKeyRead(&UserAppKey[i].keyLink) == RESET)
@@ -245,7 +245,7 @@ void HalKeyLongHoldCheck(void)
   /*check Key state press or release*/
   for(uint8_t i = 0; i < HAL_APP_KEY_NUM; i++)
   {
-    if(UserAppKey[i].ClickActive)
+    //if(UserAppKey[i].ClickActive)
     {
       /*press*/
       if(HalKeyRead(&UserAppKey[i].keyLink) == RESET)
