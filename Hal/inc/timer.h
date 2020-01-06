@@ -26,8 +26,8 @@
 #define LIGHT_FAST_FLASH_BLINK_TIME           80u
 #define LIGHT_FLASH_BLINK_TIME                120u
 #define LIGHT_FAST_BLINK_TIME                 150u
-#define LIGHT_MEDIUM_BLINK_TIME               1000u
-#define LIGHT_SLOW_BLINK_TIME                 1500u
+#define LIGHT_MEDIUM_BLINK_TIME               600u
+#define LIGHT_SLOW_BLINK_TIME                 800u
 #define LIGHT_BLINK_OFF_TIME                  180000u
 
 #define MAX_TIME_NUM                          9u
@@ -38,8 +38,8 @@
 #define USERAPP_LIS3DH_INIT_EVT               0X0010
 #define USERAPP_SENSOR_CHECK_EVT              0X0020
 #define USERAPP_LIGHT_BLINK_EVT               0X0040
-#define USERAPP_LIGHT_BLINK_OFF_EVT           0X0080
-#define USERAPP_LIGHT_OFF_EVT                 0X0100
+#define USERAPP_SUSPEND_END_EVT               0X0080
+#define USERAPP_WAITTING_END_EVT              0X0100
 /******************************************************************************/
 typedef enum
 {

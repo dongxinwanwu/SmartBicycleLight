@@ -14,7 +14,7 @@
 #include "define.h"
 /* Private typedef -----------------------------------------------------------*/
 /*****************************************************************************/
-#define MEMS_SHIFT_NUM       3
+#define MEMS_SHIFT_NUM       2
 #define MEMS_SAMPLE_COUNT    (1 << MEMS_SHIFT_NUM)
 #define MEMS_QUEUE_NUM       MEMS_SAMPLE_COUNT
 

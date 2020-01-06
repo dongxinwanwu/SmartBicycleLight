@@ -89,11 +89,12 @@ typedef enum
 
 typedef enum
 {
-  BICYCLE_DEFAULT   = (uint8_t)0x00,
-  BICYCLE_STOP      = (uint8_t)0x01,
-  BICYCLE_RUN       = (uint8_t)0x02,
-  BICYCLE_SUSPEND   = (uint8_t)0x03,/*刹车*/
-  BICYCLE_WAITTING  = (uint8_t)0x04 /*等待红绿灯*/
+  BICYCLE_STOP            = (uint8_t)0x00,
+  BICYCLE_RUN             = (uint8_t)0x01,
+  BICYCLE_SUSPEND_START   = (uint8_t)0x02,/*开始刹车*/
+  BICYCLE_SUSPEND_END     = (uint8_t)0x03,/*结束刹车*/
+  BICYCLE_WAITTING_START  = (uint8_t)0x04,/*开始等待红绿灯*/
+  BICYCLE_WAITTING_END    = (uint8_t)0x05 /*结束等待红绿灯*/
 }enBicycleState;
 
 typedef struct

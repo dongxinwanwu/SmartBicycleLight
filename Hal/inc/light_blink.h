@@ -41,17 +41,24 @@ typedef enum
   FINSHED  = (uint8_t)0x01
 }enLightFlashState;
 
+typedef enum
+{
+  NUM_OFF = (uint8_t)0x00,
+  NUM_ON  = (uint8_t)0x01
+}enBlinkMode;
+
 typedef struct
 {
   enLightState state[LIGHT_NUM];/*LED1~LED10*/
   enLightState blinkstate;
-  enLightBlinkMode mode;
+  enLightBlinkMode lightMode;
+  enBlinkMode blinkMode;
   enLightFlashState turnstate;
-  enLightFlashState waitstate;
   int8_t lightTurnIdx;/*×ªÏò*/
   int8_t lightRightIdx;
   int8_t lightLeftIdx;
   int8_t loopNum;
+  uint16_t blinkNum;
 }LightBlinkCtrl_t;
 /******************************************************************************/
 extern LightBlinkCtrl_t LightBlinkCtrl;

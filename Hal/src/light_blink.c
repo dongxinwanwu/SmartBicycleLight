@@ -26,13 +26,14 @@ LightBlinkCtrl_t LightBlinkCtrl =
 {
   .state          = LIGHT_OFF,
   .blinkstate     = LIGHT_OFF,
-  .mode           = ALL_OFF,
+  .lightMode      = ALL_OFF,
+  .blinkMode      = NUM_OFF,
   .turnstate      = FINSHED,
-  .waitstate      = FINSHED,
   .lightTurnIdx   = 0,
   .lightRightIdx  = 0,
   .lightLeftIdx   = 0,
-  .loopNum        = 0
+  .loopNum        = 0,
+  .blinkNum       = 0
 };
 
 /******************************************************************************/
@@ -47,7 +48,7 @@ LightBlinkCtrl_t LightBlinkCtrl =
 */
 void LightBlinkMode(LightBlinkCtrl_t *lightctrl)
 {
-  switch(lightctrl->mode)
+  switch(lightctrl->lightMode)
   {
   case ALL_OFF:
     LightAllOff(lightctrl);
@@ -155,7 +156,7 @@ void LightTurnRight(LightBlinkCtrl_t *lightctrl)
     lightctrl->lightTurnIdx = 0;
     lightctrl->loopNum = 0;
     lightctrl->turnstate = FINSHED;
-    lightctrl->mode = ALL_OFF;
+    lightctrl->lightMode = ALL_OFF;
   }
 }
 
@@ -204,7 +205,7 @@ void LightTurnLeft(LightBlinkCtrl_t *lightctrl)
     lightctrl->lightTurnIdx = 0;
     lightctrl->loopNum = 0;
     lightctrl->turnstate = FINSHED;
-    lightctrl->mode = ALL_OFF;
+    lightctrl->lightMode = ALL_OFF;
   }
 }
 
@@ -233,8 +234,21 @@ void LightBlink(LightBlinkCtrl_t *lightctrl)
     break;
   }
 
+  /*´ÎÊýÉÁÁÁ*/
+  if((lightctrl->blinkMode == NUM_ON) && (lightctrl->blinkstate == LIGHT_OFF))
+  {
+    if(lightctrl->blinkNum)
+    {
+      lightctrl->blinkNum--;
+      if(lightctrl->blinkNum == 0)
+      {
+        lightctrl->blinkMode = NUM_OFF;
+        return;
+      }
+    }
+  }
 
-  switch(lightctrl->mode)
+  switch(lightctrl->lightMode)
   {
   case FAST_BLINK:
     {

@@ -30,6 +30,7 @@
 */
 void DebugUart_Config(enBaudRate baudrate)
 {
+  uint32_t rate = 0;
   /*Enable Clock*/
   CLK_PeripheralClockConfig(CLK_PERIPHERAL_UART2,ENABLE);
 
@@ -44,7 +45,20 @@ void DebugUart_Config(enBaudRate baudrate)
         - Receive and transmit enabled
         - UART1 Clock disabled
   */
-  UART2_Init((uint32_t)baudrate, UART2_WORDLENGTH_8D, UART2_STOPBITS_1, UART2_PARITY_NO,
+  switch(baudrate)
+  {
+  case br9600:
+    rate = 9600;
+    break;
+
+  case br115200:
+    rate = 115200;
+    break;
+  default:
+    break;
+  }
+
+  UART2_Init(rate, UART2_WORDLENGTH_8D, UART2_STOPBITS_1, UART2_PARITY_NO,
               UART2_SYNCMODE_CLOCK_DISABLE, UART2_MODE_TXRX_ENABLE);
 
   UART2_Cmd(ENABLE);
