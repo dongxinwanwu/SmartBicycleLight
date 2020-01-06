@@ -30,7 +30,8 @@
 typedef struct
 {
   BicycleSensorState_t  bicyclesensor;
-  enBicycleState        bicyclestate;
+  enBicycleState        currentbicyclestate;
+  enBicycleState        nextbicyclestate;
 }BicycleState_t;
 
 typedef struct
