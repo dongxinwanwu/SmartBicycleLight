@@ -22,7 +22,7 @@
 #define ADC_SAMPLE_COUNT    ((1 << ADC_SHIFT_NUM) + 2) // 18 (one maximum, one minimum)
 #define ADC_RATIO           ((uint32_t) 806) /*ADC_RATIO = ( 3.3 * 1000 * 1000)/4095 */
 #define ADC_REF_VOLTAGE     (3300)  /*3.3V*/
-#define PHOTO_RES_THRESHOLD (35)    /*35K*/
+#define PHOTO_RES_THRESHOLD (25)    /*25K*/
 /* Private macro -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/

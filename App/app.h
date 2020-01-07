@@ -30,8 +30,9 @@
 typedef struct
 {
   BicycleSensorState_t  bicyclesensor;
-  enBicycleState        currentbicyclestate;
-  enBicycleState        nextbicyclestate;
+  enBicycleState        currentstate;
+  enBicycleState        nextstate;
+  enBicycleState        blockstate;/*刹车状态，点刹车有效响应2.5S*/
 }BicycleState_t;
 
 typedef struct

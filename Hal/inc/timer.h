@@ -29,6 +29,7 @@
 #define LIGHT_MEDIUM_BLINK_TIME               600u
 #define LIGHT_SLOW_BLINK_TIME                 800u
 #define LIGHT_BLINK_OFF_TIME                  180000u
+#define LIGHT_BLOCKED_LIGHT_OFF_TIME          2500u
 
 #define MAX_TIME_NUM                          9u
 #define USERAPP_RELOAD_WDT_EVT                0X0001
