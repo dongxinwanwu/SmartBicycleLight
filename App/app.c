@@ -405,20 +405,20 @@ bool UserProcessMemsData(void)
       for(uint8_t i = 0; i < MEMS_QUEUE_NUM; i++)
         MemsQueue_pop(&BicycleMemsDataQueue,&acc_z_old);
 
-      if(BicycleAccelerate.acc_z >= 1000)
+      if(BicycleAccelerate.acc_z >= 3500)
       {
         BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
-        BicycleState.bicyclesensor.memsstate = SPEED_UP;
+        BicycleState.bicyclesensor.memsstate = SPEED_DOWM;
       }
       else if(BicycleAccelerate.acc_z >= 0)
       {
         BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
         BicycleState.bicyclesensor.memsstate = SPEED_UNIFORM;
       }
-      else if(BicycleAccelerate.acc_z < 0)
+      else if(BicycleAccelerate.acc_z < -0)
       {
         BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
-        BicycleState.bicyclesensor.memsstate = SPEED_DOWM;
+        BicycleState.bicyclesensor.memsstate = SPEED_UP;
       }
 
       return TRUE;
@@ -477,12 +477,15 @@ void UserProcessBicycleData(void)
       }
       else if(stopNum >= 4)
       {
-        BicycleState.nextstate = BICYCLE_BLOCKED_START;
+        if(BicycleState.currentstate == BICYCLE_RUN)
+          BicycleState.nextstate = BICYCLE_BLOCKED_START;
       }
       else if(runNum >= 10)
       {
-        if(BicycleState.currentstate == BICYCLE_BLOCKED_START)
+        if((BicycleState.currentstate == BICYCLE_BLOCKED_START) &&
+           (BicycleState.blockstate == BICYCLE_BLOCKED_ONGOING))
         {
+          BicycleState.nextstate = BICYCLE_RUN;
           BicycleState.blockstate = BICYCLE_BLOCKED_END;
         }
         if(BicycleState.currentstate != BICYCLE_BLOCKED_START)
@@ -490,8 +493,10 @@ void UserProcessBicycleData(void)
       }
       else if(uniformNum >= 10)
       {
-        if(BicycleState.currentstate == BICYCLE_BLOCKED_START)
+        if((BicycleState.currentstate == BICYCLE_BLOCKED_START) &&
+           (BicycleState.blockstate == BICYCLE_BLOCKED_ONGOING))
         {
+          BicycleState.nextstate = BICYCLE_BLOCKED_END;
           BicycleState.blockstate = BICYCLE_BLOCKED_END;
         }
         else if(BicycleState.currentstate == BICYCLE_BLOCKED_END)
