@@ -25,7 +25,7 @@ void UserProcessHaltMode(void);
 void UserProcessNormalMode(void);
 void UserProcessWirelessData(void);
 void UserProcessPhotoData(void);
-void UserProcessMemsData(void);
+bool UserProcessMemsData(void);
 void UserProcessBicycleData(void);
 void UserProcessBicycleDayRunState(void);
 void UserProcessBicycleNightRunState(void);
@@ -145,13 +145,13 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
     /*单车状态检查(1)无线数据、(2)光照数据、(3)MEMS传感器数据*/
     UserProcessWirelessData();
     UserProcessPhotoData();
-    UserProcessMemsData();
-
-    /*自行车状态*/
-    UserProcessBicycleData();
-    /*转向灯控制*/
-    UserBicycleLightControl(&BicycleState);
-
+    if(UserProcessMemsData())
+    {
+      /*自行车状态*/
+      UserProcessBicycleData();
+      /*转向灯控制*/
+      UserBicycleLightControl(&BicycleState);
+    }
     system_start_timer(USERAPP_SENSOR_CHECK_EVT,TIMER_ONCE_MODE,SENSOR_CHECK_LOOP_TIME);
     return events ^ USERAPP_SENSOR_CHECK_EVT;
   }
@@ -169,7 +169,9 @@ uint16_t ProcessSystemTimeEvent(uint16_t events)
 
     if((BicycleState.currentstate == BICYCLE_BLOCKED_START) &&
        (BicycleState.blockstate != BICYCLE_BLOCKED_ONGOING))
+    {
       BicycleState.currentstate = BICYCLE_BLOCKED_END;
+    }
 
     /* enable interrupts */
     enableInterrupts();
@@ -377,7 +379,7 @@ void UserProcessPhotoData(void)
 *
 * @return
 */
-void UserProcessMemsData(void)
+bool UserProcessMemsData(void)
 {
   /*get Acceleration Raw data*/
   status_t response = LIS3DH_GetAccAxesRaw(&LIS3DH_SensorData);
@@ -385,9 +387,9 @@ void UserProcessMemsData(void)
 
   if(response == MEMS_SUCCESS)
   {
-    /*实际安装，水平移动方向为Z*/
+    /*加速度计算：角度，加速度大小*/
     acc_z_new = (MemsDataType)LIS3DH_SensorData.AXIS_Z;
-    /*数据处理方案：循环队列，一直进;满队列后，开始出,然后平均数*/
+    /*2020.01.08:数据处理方案：连续的几个数据取平均数*/
     /*push*/
     MemsQueue_push(&BicycleMemsDataQueue,acc_z_new);
 
@@ -400,25 +402,31 @@ void UserProcessMemsData(void)
       BicycleAccelerate.acc_z = acc_z_sum;
 
       /*pop*/
-      MemsQueue_pop(&BicycleMemsDataQueue,&acc_z_old);
+      for(uint8_t i = 0; i < MEMS_QUEUE_NUM; i++)
+        MemsQueue_pop(&BicycleMemsDataQueue,&acc_z_old);
+
+      if(BicycleAccelerate.acc_z >= 1000)
+      {
+        BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
+        BicycleState.bicyclesensor.memsstate = SPEED_UP;
+      }
+      else if(BicycleAccelerate.acc_z >= 0)
+      {
+        BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
+        BicycleState.bicyclesensor.memsstate = SPEED_UNIFORM;
+      }
+      else if(BicycleAccelerate.acc_z < 0)
+      {
+        BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
+        BicycleState.bicyclesensor.memsstate = SPEED_DOWM;
+      }
+
+      return TRUE;
     }
 
-    if(BicycleAccelerate.acc_z >= 2000)
-    {
-      BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
-      BicycleState.bicyclesensor.memsstate = SPEED_UP;
-    }
-    else if(BicycleAccelerate.acc_z >= -1000)
-    {
-      BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
-      BicycleState.bicyclesensor.memsstate = SPEED_UNIFORM;
-    }
-    else if(BicycleAccelerate.acc_z < -1000)
-    {
-      BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
-      BicycleState.bicyclesensor.memsstate = SPEED_DOWM;
-    }
+    return FALSE;
   }
+  return FALSE;
 }
 
 /*******************************************************************************
@@ -473,10 +481,8 @@ void UserProcessBicycleData(void)
       }
       else if(runNum >= 10)
       {
-        if((BicycleState.currentstate == BICYCLE_BLOCKED_START) &&
-           (BicycleState.blockstate == BICYCLE_BLOCKED_ONGOING))
+        if(BicycleState.currentstate == BICYCLE_BLOCKED_START)
         {
-          BicycleState.nextstate = BICYCLE_RUN;
           BicycleState.blockstate = BICYCLE_BLOCKED_END;
         }
         if(BicycleState.currentstate != BICYCLE_BLOCKED_START)
@@ -484,10 +490,8 @@ void UserProcessBicycleData(void)
       }
       else if(uniformNum >= 10)
       {
-        if((BicycleState.currentstate == BICYCLE_BLOCKED_START) &&
-           (BicycleState.blockstate == BICYCLE_BLOCKED_ONGOING))
+        if(BicycleState.currentstate == BICYCLE_BLOCKED_START)
         {
-          BicycleState.nextstate = BICYCLE_BLOCKED_END;
           BicycleState.blockstate = BICYCLE_BLOCKED_END;
         }
         else if(BicycleState.currentstate == BICYCLE_BLOCKED_END)
