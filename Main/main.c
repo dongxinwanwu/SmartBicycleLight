@@ -104,9 +104,6 @@ void SysBspInit(void)
   /*user timer*/
   SystemTimer_Config();
   system_timer_init(ProcessSystemTimeEvent);
-#if (defined DEBUG)
-  DebugUart_Config(br9600);
-#endif
 }
 
 /*******************************************************************************

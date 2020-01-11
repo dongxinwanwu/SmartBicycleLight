@@ -11,7 +11,6 @@
 #include "adc.h"
 #include "timer.h"
 #include "math.h"
-#include "debug.h"
 /* Private typedef -----------------------------------------------------------*/
 
 /* Private define ------------------------------------------------------------*/

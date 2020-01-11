@@ -28,7 +28,6 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "stm8s_it.h"
-#include "debug.h"
 #include "timer.h"
 #include "key.h"
 /** @addtogroup Template_Project

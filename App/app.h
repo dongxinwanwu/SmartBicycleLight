@@ -19,11 +19,9 @@
 #include "key.h"
 #include "led.h"
 #include "adc.h"
-#include "debug.h"
 #include "lis3dh_driver.h"
 #include "light_blink.h"
 #include "spi.h"
-#include "bk2425.h"
 #include "mems_queue.h"
 #include "state_queue.h"
 /*****************************************************************************/

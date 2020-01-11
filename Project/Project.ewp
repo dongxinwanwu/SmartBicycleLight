@@ -10474,12 +10474,6 @@
                 <name>$PROJ_DIR$\..\Hal\inc\adc.h</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\Hal\inc\bk2425.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Hal\inc\debug.h</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\Hal\inc\key.h</name>
             </file>
             <file>
@@ -10505,12 +10499,6 @@
             <name>src</name>
             <file>
                 <name>$PROJ_DIR$\..\Hal\src\adc.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Hal\src\bk2425.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Hal\src\debug.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Hal\src\key.c</name>

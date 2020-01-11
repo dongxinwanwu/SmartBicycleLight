@@ -410,12 +410,12 @@ bool UserProcessMemsData(void)
         BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
         BicycleState.bicyclesensor.memsstate = SPEED_DOWM;
       }
-      else if(BicycleAccelerate.acc_z >= 0)
+      else if(BicycleAccelerate.acc_z >= 500)
       {
         BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
         BicycleState.bicyclesensor.memsstate = SPEED_UNIFORM;
       }
-      else if(BicycleAccelerate.acc_z < -0)
+      else if(BicycleAccelerate.acc_z < 500)
       {
         BicycleState.bicyclesensor.sensorstate.MEMSSensor = 1;
         BicycleState.bicyclesensor.memsstate = SPEED_UP;
